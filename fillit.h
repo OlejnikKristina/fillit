@@ -10,16 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FILIT_H
-#define FILIT_H
-#include "libft.h"
-#include <stddef.h>
-#include <stdlib.h>
-
+#ifndef FILLIT_H
+# define FILLIT_H
+# include "libft/libft.h"
+# include <stddef.h>
+# include <stdlib.h>
 # include <unistd.h>
-# include <sys/stat.h> 
+# include <sys/stat.h>
 # include <fcntl.h>
-
+# include <inttypes.h>
 # define PROTECT(x) if (!(x)) return (NULL);
 
 typedef struct			s_tetra
@@ -30,38 +29,16 @@ typedef struct			s_tetra
 	struct s_tetra		*next;
 }						t_tetra;
 
-# endif
-//arr[0]->coord1->x;
-t_tet   *arr[26];
-//t_tet	arr[26][1];
-///tetarr = arr[sizeof(t_tet) * 26];
-
-//arr[0] = (t_tet)malloc(sizeof(t_tet));
-
-char *str[3];
-
-str[0] = malloc(100);
-str[1] = &string;
-
-typedef struct	s_tet
+typedef struct			s_tet
 {
-	t_coord		coord1;
-	t_coord		coord2;
-	t_coord		coord3;
-	t_coord		coord4;
-	char		letter;
-}				t_tet;
-/*
-char *str;
+	uint8_t				shape;
+}						t_tet;
 
-str[0] = c;
-
-t_tet *item;
-
-* -> DATA, DATA, DATA;
-*/
-typedef struct s_coord
+struct					s_shape
 {
-	short int x;
-	short int y;
-}				t_coord;
+	uint8_t				y[4];
+	uint8_t				x[4];
+	uint8_t				index;
+}						shape[19];
+
+#endif
