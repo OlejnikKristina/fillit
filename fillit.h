@@ -42,6 +42,6 @@ struct					s_shape
 	uint8_t				index;
 }						shape[19];
 
-void	error(int error);
+uint8_t					error(int error);
 
 #endif

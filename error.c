@@ -12,13 +12,13 @@
 
 #include "libft/libft.h"
 
-void	error(int error)
+uint8_t	error(int error)
 {
 	ft_putstr("Error. ");
 	if (error == 1)
-		ft_putstr("Can bot open a file\n");
+		ft_putstr("Can not open a file\n");
 	else if (error == 2)
-		ft_putstr("File is not valid\n");
+		ft_putstr("File has not valid input\n");
 	else if (error == 3)
 		ft_putstr("Not new line in the end of tetrominos\n");
 	else if (error == 4)
@@ -28,5 +28,6 @@ void	error(int error)
 	else if (error == 6)
 		ft_putstr("\n");
 	else
-		return ;
+		return (1);
+	return (1);
 }
