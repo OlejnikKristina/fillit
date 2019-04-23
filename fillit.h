@@ -19,6 +19,7 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <inttypes.h>
+# include <errno.h>
 # define PROTECT(x) if (!(x)) return (NULL);
 
 typedef struct			s_tetra
@@ -40,5 +41,7 @@ struct					s_shape
 	uint8_t				x[4];
 	uint8_t				index;
 }						shape[19];
+
+void	error(int error);
 
 #endif

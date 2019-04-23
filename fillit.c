@@ -29,12 +29,6 @@ void discover_new_int()
 	printf("int %zu \n", (sizeof(int)));
 }
 
-int		error()
-{
-	ft_putstr("error\n");
-	return (1);
-}
-
 short int	check_file()
 {
 	return (3);
@@ -50,30 +44,6 @@ void		print_list(t_tetra *top)
 		printf("%c\n", head->letter);
 		head = head->next;
 	}
-}
-
-int		read_tet(char *file)
-{
-	ssize_t		byte;
-
-	t_tetra		*tet;
-	char		buff[6];
-	short int	fd;
-	short int	i;
-
-	
-/*
-	fd = open(file, O_RDWR);
-	i = 0;
-	if (fd < 0  && error())
-		return(0);
-	while (byte > -1)
-	{
-		byte = read(fd, buff, 5);
-		buff[4] = '\0';
-
-	}*/
-	return (0);
 }
 
 int		fillit()
@@ -99,7 +69,7 @@ void		coordinat_x(uint8_t x0, uint8_t x1, uint8_t x2, uint8_t x3)
 	return ;
 }
 
-void		coordinat_x(uint8_t y0, uint8_t y1, uint8_t y2, uint8_t y3)
+void		coordinat_y(uint8_t y0, uint8_t y1, uint8_t y2, uint8_t y3)
 {
 	static uint8_t		i;
 
@@ -114,10 +84,103 @@ void		coordinat_x(uint8_t y0, uint8_t y1, uint8_t y2, uint8_t y3)
 	return ;
 }
 
-int		main(int argc, char **argv)
+const int		open_file(const char *file)
 {
-	
+	int		fd;
+
+	fd = open(file, O_RDONLY);
+	printf("fd %s\n", file);
+	printf("fd %d\n", fd);
+	if (fd == -1)
+	{
+		error(1);
+		return (-1);
+	}
+	return (fd);
+}
+/*
+** Checks if first 4 chars in line is dots or hash
+** Checks if 5th chars is \n
+** Checks if there's 4 hash per tetramino block
+*/
+int8_t	check_line(char buff[5], short int	line)
+{
+	uint8_t 			i;
+	static short int 	hash;
+
+	i = 0;
+	if (line == 0)
+		hash = 0;
+	while (i <= 3)
+	{
+		if (buff[i] == '#')
+			hash++;
+		if (buff[i] != '.' && buff[i] != '#')
+			return (-1);
+		i++;
+	}
+	if (buff[4] != '\n' && buff[4] != '\0')
+		return (-1);
+	if (line == 3 && hash != 4)
+		return (-1);
 	return (0);
 }
 
+int8_t	check_map(const int fd)
+{
+	char	buff[5];
+	ssize_t	byte;
+	short int	line;
+	short int buff_size; //547
+	short int last_line;
 
+	byte = read(fd, buff, 5);
+	line = 0;
+	last_line = 0;
+	while (byte > 0)
+	{
+		if (line == 4)
+		{
+			if (buff[0] != '\n')
+				return (-1);
+			line = 0;
+			buff_size = 5;
+			last_line = 1;
+		}
+		else if (line <= 3)
+		{
+			buff_size = 5;
+			if (check_line(buff, line) == -1)
+				return (-1);
+			line++;
+			last_line = 0;
+		}
+		if (line == 4)
+			buff_size = 1;
+		ft_bzero(buff, 5);
+		byte = read(fd, buff, buff_size);
+	}
+	return ((last_line) ? -1 : 0);
+}
+
+int		main(int argc, char **argv)
+{
+	int fd;
+
+	if (argc != 2)
+	{
+		error(4);
+		return (0);
+	}
+	fd = open_file(argv[1]);
+	if (fd == -1)
+		return (0);
+	if (check_map(fd) == -1)
+	{
+		error(2);
+		return (-1);
+	}
+	printf("Success\n");
+	
+	return (0);
+}
