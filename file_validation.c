@@ -14,66 +14,32 @@
 #include "fillit.h"
 
 /*
-** Checks if first 4 chars in line is dots or hash
-** Checks if 5th chars is \n
-** Checks if there's 4 hash per tetramino block
-*/
-
-int8_t	check_line(char buff[5], short int line)
-{
-	uint8_t				i;
-	static short int	hash;
-
-	i = 0;
-	if (line == 0)
-		hash = 0;
-	while (i <= 3)
-	{
-		if (buff[i] == '#')
-			hash++;
-		if (buff[i] != '.' && buff[i] != '#')
-			return (-1);
-		i++;
-	}
-	if (buff[4] != '\n' && buff[4] != '\0')
-		return (-1);
-	if (line == 3 && hash != 4)
-		return (-1);
-	return (0);
-}
-
-int8_t	check_map(const int fd, int8_t *tet_num, int8_t line, int8_t last_line)
-{
-	char		buff[5];
-	ssize_t		byte;
-
-	byte = read(fd, buff, 5);
-	while (byte > 0)
-	{
-		if ((line == 4) && (last_line = 1) && (*tet_num += 1))
-		{
-			if (buff[0] != '\n')
-				return (-1);
-			line = 0;
-		}
-		else if (line <= 3)
-		{
-			if (check_line(buff, line) == -1)
-				return (-1);
-			line++;
-			last_line = 0;
-		}
-		if ((line == 4) && (byte = read(fd, buff, 1)))
-			continue ;
-		ft_bzero(buff, 5);
-		byte = read(fd, buff, 5);
-	}
-	return ((last_line) ? -1 : 0);
-}
-
-/*
 **printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
 */
+
+int8_t	delimited_box(char tetrs[][4][6], int amount, int line_one, int line_two)
+{
+	int	token;
+	int dots_one;
+	int	dots_two;
+
+	token = 0;
+	dots_one = 0;
+	dots_two = 0;
+	while (token < 4)
+	{
+		if (tetrs[0][line_one][token] == '.')
+			dots_one++;
+		if (tetrs[0][line_two][token] == '.')
+			dots_two++;
+		token++;
+	}
+	if ((dots_one == 4) && (dots_two == 4))
+		printf ("Error. Fail!");
+	if (amount)
+		delimited_box(&tetrs[amount - 1], amount - 1, line_one, line_two);
+	return (0);
+}
 
 int8_t	check_shape_algo(char tetrs[][4][6], int amount)
 {
@@ -128,7 +94,68 @@ int8_t	check_shape(const int fd, short int tet_amount)
 		tetrs[i][line][5] = '\0';
 		line++;
 	}
+	delimited_box(&tetrs[tet_amount - 1], tet_amount, 0, 1);
+	delimited_box(&tetrs[tet_amount - 1], tet_amount, 1, 3);
 	return (check_shape_algo(&tetrs[tet_amount - 1], tet_amount - 1));
+}
+
+
+/*
+** Checks if first 4 chars in line is dots or hash
+** Checks if 5th chars is \n
+** Checks if there's 4 hash per tetramino block
+*/
+
+int8_t	check_line(char buff[5], short int line)
+{
+	uint8_t				i;
+	static short int	hash;
+
+	i = 0;
+	if (line == 0)
+		hash = 0;
+	while (i <= 3)
+	{
+		if (buff[i] == '#')
+			hash++;
+		if (buff[i] != '.' && buff[i] != '#')
+			return (-1);
+		i++;
+	}
+	if (buff[4] != '\n')
+		return (-1);
+	if (line == 3 && hash != 4)
+		return (-1);
+	return (0);
+}
+
+int8_t	check_map(const int fd, int8_t *tet_num, int line, int last_line)
+{
+	char		buff[5];
+	ssize_t		byte;
+
+	byte = read(fd, buff, 5);
+	while (byte > 0)
+	{
+		if ((line == 4) && (last_line = 1) && (*tet_num += 1))
+		{
+			if (buff[0] != '\n')
+				return (-1);
+			line = 0;
+		}
+		else if (line <= 3)
+		{
+			if (check_line(buff, line) == -1)
+				return (-1);
+			line++;
+			last_line = 0;
+		}
+		if ((line == 4) && (byte = read(fd, buff, 1)))
+			continue ;
+		ft_bzero(buff, 5);
+		byte = read(fd, buff, 5);
+	}
+	return ((last_line || line != 4) ? -1 : 0);
 }
 
 int8_t	check_file(char *file)
@@ -151,8 +178,8 @@ int8_t	check_file(char *file)
 	fd = open_file(file);
 	if ((fd == -1) && error(1))
 		return (-1);
-	if (check_shape(fd, tet_amount) && error(2))
+	if (check_shape(fd, tet_amount) && error(5))
 		return (-1);
-	printf("tet amount:%hhd\n", tet_amount);
+//	printf("tet amount:%hhd\n", tet_amount);
 	return (0);
 }

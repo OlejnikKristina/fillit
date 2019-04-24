@@ -35,7 +35,10 @@ uint8_t	error(int error)
 	else if (error == 4)
 		ft_putstr("Send as parraeter one file.\n");
 	else if (error == 5)
-		ft_putstr("\n");
+	{
+		ft_putstr("Not correct input. ");
+		ft_putstr("Tetramino blox has to be attached to each other.\n");
+	}
 	else if (error == 6)
 		ft_putstr("\n");
 	else
