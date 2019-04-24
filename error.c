@@ -22,7 +22,7 @@ uint8_t	error(int error)
 	else if (error == 3)
 		ft_putstr("Not new line in the end of tetrominos\n");
 	else if (error == 4)
-		ft_putstr("Send as parraeter only one file.\n");
+		ft_putstr("Send as parraeter one file.\n");
 	else if (error == 5)
 		ft_putstr("\n");
 	else if (error == 6)

@@ -51,7 +51,9 @@ void		coordinat_x(uint8_t x0, uint8_t x1, uint8_t x2, uint8_t x3)
 	shape[i].x[3] = x3;
 	shape[i].index = i;
 	i++;
-//	printf("%hhu\n", shape[0].shape);
+/*
+**	printf("%hhu\n", shape[0].shape);
+*/
 	printf("%hhu\n", i);
 	return ;
 }
@@ -66,7 +68,9 @@ void		coordinat_y(uint8_t y0, uint8_t y1, uint8_t y2, uint8_t y3)
 	shape[i].y[3] = y3;
 	shape[i].index = i;
 	i++;
-//	printf("%hhu\n", shape[0].shape);
+/*
+**	printf("%hhu\n", shape[0].shape);
+*/
 	printf("%hhu\n", i);
 	return ;
 }
@@ -113,7 +117,7 @@ int8_t	check_map(const int fd, short int *tet_amount)
 	char		buff[5];
 	ssize_t		byte;
 	short int	line;
-	short int 	buff_size; //547
+	short int 	buff_size;
 	short int 	last_line;
 
 	byte = read(fd, buff, 5);
@@ -146,41 +150,40 @@ int8_t	check_map(const int fd, short int *tet_amount)
 	return ((last_line) ? -1 : 0);
 }
 
-int8_t	check_shape_two(char tetrs[][4][6])
+int8_t	check_shape_two(char tetrs[][4][6], int amount)
 {
-//	int	tet;
-	int	line;
-	int neighbour;
-	int	token;
+	int			line;
+	int			token;
 
-//	tet = 0;
-	printf("str:\"%s\"\n", tetrs[3][0]);
 	line = 0;
-	token = 0;
-	neighbour = 0;
 	while (line < 4)
 	{
-		while (token < 4)
+		token = -1;
+		line++;
+		while (token <= 4)
 		{
+			token++;
 			if (tetrs[0][line][token] == '#')
 			{
-				if(tetrs[0][line + 1][token] == '#')
-					neighbour++;
-				if(tetrs[0][line][token + 1] == '#')
-					neighbour++;
-				if (neighbour == 0)
-					printf("fail\n");
+				if ((line == 3 ) && (tetrs[0][line - 1][token] == '#'))
+					continue ;
+				if (tetrs[0][line + 1][token] == '#')
+					continue ;
+				if (tetrs[0][line][token + 1] == '#')
+					continue ;
+				if (tetrs[0][line][token - 1] == '#')
+					continue ;
+				else
+					printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
 			}
-			token++;
 		}
-		line++;
 	}
-	return (0);
+	return ((0 <= amount - 1) ? check_shape_two(&tetrs[-1], amount - 1) : 0);
 }
 
 int8_t	check_shape(const int fd, short int tet_amount)
 {
-	char	tetrs[4][4][6];
+	char	tetrs[tet_amount][4][6];
 	char	buff[5];
 	ssize_t	byte;
 	int		i;
@@ -203,7 +206,7 @@ int8_t	check_shape(const int fd, short int tet_amount)
 		line++;
 	}
 	printf("str:\"%s\"\n", tetrs[0][0]);
-	check_shape_two(tetrs);
+	check_shape_two(&tetrs[tet_amount - 1], tet_amount - 1);
 	return (0);
 }
 
