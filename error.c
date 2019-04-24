@@ -11,6 +11,17 @@
 /* ************************************************************************** */
 
 #include "libft/libft.h"
+#include "fillit.h"
+
+const int		open_file(const char *file)
+{
+	int		fd;
+
+	fd = open(file, O_RDONLY);
+	if ((fd == -1) && error(1))
+		return (-1);
+	return (fd);
+}
 
 uint8_t	error(int error)
 {

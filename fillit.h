@@ -43,6 +43,7 @@ struct					s_shape
 }						shape[19];
 
 uint8_t					error(int error);
+const int				open_file(const char *file);
 int8_t					check_file(char *file);
 
 #endif
