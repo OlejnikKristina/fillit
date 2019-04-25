@@ -35,13 +35,35 @@ uint8_t	error(int error)
 	else if (error == 4)
 		ft_putstr("Send as parraeter one file.\n");
 	else if (error == 5)
-	{
 		ft_putstr("Not correct input. ");
-		ft_putstr("Tetramino blox has to be attached to each other.\n");
-	}
 	else if (error == 6)
 		ft_putstr("Incorrect shape of tetramino\n");
 	else
 		return (1);
 	return (1);
+}
+
+int8_t	check_file(char *file)
+{
+	int			fd;
+	int8_t		tet_amount;
+	int8_t		var;
+	int8_t		for_norm;
+
+	tet_amount = 1;
+	var = 0;
+	for_norm = 0;
+	fd = open_file(file);
+	if ((fd == -1) && error(1))
+		return (-1);
+	if (((check_map(fd, &tet_amount, var, for_norm) == -1)
+	|| (tet_amount > 26)) && error(2))
+		return (-1);
+	close(fd);
+	fd = open_file(file);
+	if ((fd == -1) && error(1))
+		return (-1);
+	if ((check_shape(fd, tet_amount) == -1) && error(2))
+		return (-1);
+	return (0);
 }

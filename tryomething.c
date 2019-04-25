@@ -13,6 +13,25 @@
 #include <stdio.h>
 #include "fillit.h"
 
+/*
+int8_t	set_tet_size(t_tetro *tet[], char tet_arr[][4][6], short int size)
+{
+	int8_t	i;
+	char	symbol;
+
+	i = 0;
+	symbol = 'A';
+	while (i < size)
+	{
+		tet[i]->letter = symbol;
+		printf(("letter: %c\n"), tet[i]->letter);
+		symbol++;
+		i++;
+	}
+	return (0);
+}*/
+
+
 void discover_new_int()
 {
 	uint8_t			xs;

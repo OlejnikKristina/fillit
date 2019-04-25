@@ -20,30 +20,44 @@
 # include <fcntl.h>
 # include <inttypes.h>
 # include <errno.h>
+#include <stdio.h>
 # define PROTECT(x) if (!(x)) return (NULL);
 
-typedef struct			s_tetra
+typedef struct		s_tetro
 {
-	unsigned short int	x[4];
-	unsigned short int	y[4];
-	char				letter;
-	struct s_tetra		*next;
-}						t_tetra;
+	int				x;
+	int				y;
+	char			**tet;
+	int				shape;
+	char			letter;
+}					t_tetro;
 
-typedef struct			s_tet
+
+typedef struct		s_tetra
 {
-	uint8_t				shape;
-}						t_tet;
+	short int	x[4];
+	short int	y[4];
+	char			letter;
+	struct s_tetra	*next;
+}					t_tetra;
 
-struct					s_shape
+typedef struct		s_tet
 {
-	uint8_t				y[4];
-	uint8_t				x[4];
-	uint8_t				index;
-}						shape[19];
+	uint8_t			shape;
+}					t_tet;
 
-uint8_t					error(int error);
-const int				open_file(const char *file);
-int8_t					check_file(char *file);
+struct				s_shape
+{
+	uint8_t			y[4];
+	uint8_t			x[4];
+	uint8_t			index;
+}					shape[19];
+
+uint8_t				error(int error);
+const int			open_file(const char *file);
+int8_t				check_file(char *file);
+int8_t				check_map(const int fd, int8_t *tet_num, int line, int last_line);
+int8_t				check_shape(const int fd, short int tet_amount);
+int8_t				algoritm(char tet[][4][6], short int size);
 
 #endif

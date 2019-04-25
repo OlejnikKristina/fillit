@@ -13,86 +13,9 @@
 #include <stdio.h>
 #include "fillit.h"
 
-/*
-while (token <= 4)
-		{
-			token++;
-			if (tetrs[0][line][token] == '#')
-			{
-				if (((line == 3) && (tetrs[0][line - 1][token] == '#'))
-				|| (tetrs[0][line + 1][token] == '#'))
-					continue ;
-				if ((tetrs[0][line][token + 1] == '#')
-				|| (tetrs[0][line][token - 1] == '#') || (tetrs[0][line - 1][token] == '#'))
-					continue ;
-				else
-				{
-					printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
-					printf("%s\n", tetrs[0][0]);
-					return (-1);
-				}
-			}
-		}s
-**printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
-*/
-
-int		delimited_box(char tetrs[][4][6], int amount, int line_one, int line_two)
+int8_t	check_block(char tetrs[][4][6], int8_t line, int8_t hash)
 {
-	int	token;
-	int dots_one;
-	int	dots_two;
-	uint8_t	hash;
-	uint8_t	i;
-
-	token = 0;
-	dots_one = 0;
-	dots_two = 0;
-	hash = 0;
-	while (token < 4)
-	{
-		if (tetrs[0][line_one][token] == '.')
-			dots_one++;
-		if (tetrs[0][line_two][token] == '.')
-			dots_two++;
-		token++;
-	}
-	i = 0;
-	while (i < 4)
-	{
-		if (hash == 4)
-			break ;
-		hash = 0;
-		while (token < 4)
-		{
-			if (tetrs[0][i][token] == '#')
-				hash++;
-			token++;
-		}
-		token = 0;
-		i++;
-	}
-	if ((dots_one == 4) && (dots_two == 4) && (hash != 4))
-		return (-1);
-	if (amount--)
-		if (delimited_box(&tetrs[amount - 1], amount, line_one, line_two) == -1)
-			return (-1);
-	return (0);
-}
-
-int		dots(char *str)
-{
-	if (ft_strncmp((const char *)str, "....", 4) == 0)
-	{
-		printf("true");
-		return (1);
-	}
-	else
-		return (0);
-}
-
-int8_t	check_block(char tetrs[][4][6], int line, int hash)
-{
-	int		neighbor;
+	int8_t	neighbor;
 
 	neighbor = 0;
 	if ((hash != 3) && (tetrs[0][line][hash + 1] == '#'))
@@ -106,37 +29,32 @@ int8_t	check_block(char tetrs[][4][6], int line, int hash)
 	return (neighbor);
 }
 
-int8_t	check_shape_algo(char tetrs[][4][6], int amount)
+int8_t	check_tet_shape(char tetrs[][4][6], short int amount)
 {
-	int	line;
-	int	token;
-	int	neighbor;
+	int8_t	line;
+	int8_t	token;
+	int8_t	neighbor;
 
 	token = 0;
 	line = 0;
 	neighbor = 0;
 	while (line < 4)
 	{
-		token = -1;
+		token = 0;
 		while (token < 4)
 		{
 			if (tetrs[0][line][token] == '#')
-			{
 				neighbor += check_block(&tetrs[0], line, token);
-			}
 			token++;
 		}
 		line++;
 	}
-//	printf("neighbors %d\n", neighbor);
 	if ((neighbor != 6) && (neighbor != 8))
 		return (-1);
 	if ((0 <= amount - 1))
-	{	if (check_shape_algo(&tetrs[-1], amount - 1) == -1)
+		if (check_tet_shape(&tetrs[-1], amount - 1) == -1)
 			return (-1);
-	}
 	return (0);
-//	return ((0 <= amount - 1) ? check_shape_algo(&tetrs[-1], amount - 1) : 0);
 }
 
 int8_t	check_shape(const int fd, short int tet_amount)
@@ -144,8 +62,8 @@ int8_t	check_shape(const int fd, short int tet_amount)
 	char	tetrs[tet_amount][4][6];
 	char	buff[5];
 	ssize_t	byte;
-	int		i;
-	int		line;
+	int8_t	i;
+	int8_t	line;
 
 	i = 0;
 	line = 0;
@@ -163,13 +81,11 @@ int8_t	check_shape(const int fd, short int tet_amount)
 		tetrs[i][line][5] = '\0';
 		line++;
 	}
-//	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 0, 2) == -1)
-//		return (-1);
-//	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 1, 3) == -1)
-//		return (-1);
-	return (check_shape_algo(&tetrs[tet_amount - 1], tet_amount - 1));
+	if (check_tet_shape(&tetrs[tet_amount - 1], tet_amount - 1) == -1)
+		return (-1);
+	algoritm(tetrs, tet_amount);
+	return (0);
 }
-
 
 /*
 ** Checks if first 4 chars in line is dots or hash
@@ -227,30 +143,4 @@ int8_t	check_map(const int fd, int8_t *tet_num, int line, int last_line)
 		byte = read(fd, buff, 5);
 	}
 	return ((last_line || line != 4) ? -1 : 0);
-}
-
-int8_t	check_file(char *file)
-{
-	int			fd;
-	int8_t		tet_amount;
-	int8_t		var;
-	int8_t		for_norm;
-
-	tet_amount = 1;
-	var = 0;
-	for_norm = 0;
-	fd = open_file(file);
-	if ((fd == -1) && error(1))
-		return (-1);
-	if (((check_map(fd, &tet_amount, var, for_norm) == -1)
-	|| (tet_amount > 26)) && error(2))
-		return (-1);
-	close(fd);
-	fd = open_file(file);
-	if ((fd == -1) && error(1))
-		return (-1);
-	if ((check_shape(fd, tet_amount) == -1) && error(2))
-		return (-1);
-//	printf("tet amount:%hhd\n", tet_amount);
-	return (0);
 }
