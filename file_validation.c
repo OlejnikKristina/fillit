@@ -90,37 +90,53 @@ int		dots(char *str)
 		return (0);
 }
 
+int8_t	check_block(char tetrs[][4][6], int line, int hash)
+{
+	int		neighbor;
+
+	neighbor = 0;
+	if ((hash != 3) && (tetrs[0][line][hash + 1] == '#'))
+		neighbor++;
+	if ((hash != 0) && (tetrs[0][line][hash - 1] == '#'))
+		neighbor++;
+	if ((line != 0) && (tetrs[0][line - 1][hash] == '#'))
+		neighbor++;
+	if ((line != 3) && (tetrs[0][line + 1][hash] == '#'))
+		neighbor++;
+	return (neighbor);
+}
+
 int8_t	check_shape_algo(char tetrs[][4][6], int amount)
 {
 	int	line;
 	int	token;
+	int	neighbor;
 
+	token = 0;
 	line = 0;
+	neighbor = 0;
 	while (line < 4)
 	{
 		token = -1;
-		line++;
-		while (token <= 4)
+		while (token < 4)
 		{
-			token++;
 			if (tetrs[0][line][token] == '#')
 			{
-				if (((line == 3) && (tetrs[0][line - 1][token] == '#'))
-				|| (tetrs[0][line + 1][token] == '#'))
-					continue ;
-				if ((tetrs[0][line][token + 1] == '#')
-				|| (tetrs[0][line][token - 1] == '#') || (tetrs[0][line - 1][token] == '#'))
-					continue ;
-				else
-				{
-					printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
-					printf("%s\n", tetrs[0][0]);
-					return (-1);
-				}
+				neighbor += check_block(&tetrs[0], line, token);
 			}
+			token++;
 		}
+		line++;
 	}
-	return ((0 <= amount - 1) ? check_shape_algo(&tetrs[-1], amount - 1) : 0);
+//	printf("neighbors %d\n", neighbor);
+	if ((neighbor != 6) && (neighbor != 8))
+		return (-1);
+	if ((0 <= amount - 1))
+	{	if (check_shape_algo(&tetrs[-1], amount - 1) == -1)
+			return (-1);
+	}
+	return (0);
+//	return ((0 <= amount - 1) ? check_shape_algo(&tetrs[-1], amount - 1) : 0);
 }
 
 int8_t	check_shape(const int fd, short int tet_amount)
@@ -147,10 +163,10 @@ int8_t	check_shape(const int fd, short int tet_amount)
 		tetrs[i][line][5] = '\0';
 		line++;
 	}
-	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 0, 2) == -1)
-		return (-1);
-	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 1, 3) == -1)
-		return (-1);
+//	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 0, 2) == -1)
+//		return (-1);
+//	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 1, 3) == -1)
+//		return (-1);
 	return (check_shape_algo(&tetrs[tet_amount - 1], tet_amount - 1));
 }
 
@@ -233,7 +249,7 @@ int8_t	check_file(char *file)
 	fd = open_file(file);
 	if ((fd == -1) && error(1))
 		return (-1);
-	if ((check_shape(fd, tet_amount) == -1) && error(6))
+	if ((check_shape(fd, tet_amount) == -1) && error(2))
 		return (-1);
 //	printf("tet amount:%hhd\n", tet_amount);
 	return (0);
