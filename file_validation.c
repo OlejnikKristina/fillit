@@ -14,18 +14,40 @@
 #include "fillit.h"
 
 /*
+while (token <= 4)
+		{
+			token++;
+			if (tetrs[0][line][token] == '#')
+			{
+				if (((line == 3) && (tetrs[0][line - 1][token] == '#'))
+				|| (tetrs[0][line + 1][token] == '#'))
+					continue ;
+				if ((tetrs[0][line][token + 1] == '#')
+				|| (tetrs[0][line][token - 1] == '#') || (tetrs[0][line - 1][token] == '#'))
+					continue ;
+				else
+				{
+					printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
+					printf("%s\n", tetrs[0][0]);
+					return (-1);
+				}
+			}
+		}s
 **printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
 */
 
-int8_t	delimited_box(char tetrs[][4][6], int amount, int line_one, int line_two)
+int		delimited_box(char tetrs[][4][6], int amount, int line_one, int line_two)
 {
 	int	token;
 	int dots_one;
 	int	dots_two;
+	uint8_t	hash;
+	uint8_t	i;
 
 	token = 0;
 	dots_one = 0;
 	dots_two = 0;
+	hash = 0;
 	while (token < 4)
 	{
 		if (tetrs[0][line_one][token] == '.')
@@ -34,11 +56,38 @@ int8_t	delimited_box(char tetrs[][4][6], int amount, int line_one, int line_two)
 			dots_two++;
 		token++;
 	}
-	if ((dots_one == 4) && (dots_two == 4))
-		printf ("Error. Fail!");
-	if (amount)
-		delimited_box(&tetrs[amount - 1], amount - 1, line_one, line_two);
+	i = 0;
+	while (i < 4)
+	{
+		if (hash == 4)
+			break ;
+		hash = 0;
+		while (token < 4)
+		{
+			if (tetrs[0][i][token] == '#')
+				hash++;
+			token++;
+		}
+		token = 0;
+		i++;
+	}
+	if ((dots_one == 4) && (dots_two == 4) && (hash != 4))
+		return (-1);
+	if (amount--)
+		if (delimited_box(&tetrs[amount - 1], amount, line_one, line_two) == -1)
+			return (-1);
 	return (0);
+}
+
+int		dots(char *str)
+{
+	if (ft_strncmp((const char *)str, "....", 4) == 0)
+	{
+		printf("true");
+		return (1);
+	}
+	else
+		return (0);
 }
 
 int8_t	check_shape_algo(char tetrs[][4][6], int amount)
@@ -60,10 +109,14 @@ int8_t	check_shape_algo(char tetrs[][4][6], int amount)
 				|| (tetrs[0][line + 1][token] == '#'))
 					continue ;
 				if ((tetrs[0][line][token + 1] == '#')
-				|| (tetrs[0][line][token - 1] == '#'))
+				|| (tetrs[0][line][token - 1] == '#') || (tetrs[0][line - 1][token] == '#'))
 					continue ;
 				else
+				{
+					printf("FAIL. Tetramino %d line %d token %d\n", amount, line, token);
+					printf("%s\n", tetrs[0][0]);
 					return (-1);
+				}
 			}
 		}
 	}
@@ -94,8 +147,10 @@ int8_t	check_shape(const int fd, short int tet_amount)
 		tetrs[i][line][5] = '\0';
 		line++;
 	}
-	delimited_box(&tetrs[tet_amount - 1], tet_amount, 0, 1);
-	delimited_box(&tetrs[tet_amount - 1], tet_amount, 1, 3);
+	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 0, 2) == -1)
+		return (-1);
+	if (delimited_box(&tetrs[tet_amount - 1], tet_amount - 1, 1, 3) == -1)
+		return (-1);
 	return (check_shape_algo(&tetrs[tet_amount - 1], tet_amount - 1));
 }
 
@@ -178,7 +233,7 @@ int8_t	check_file(char *file)
 	fd = open_file(file);
 	if ((fd == -1) && error(1))
 		return (-1);
-	if (check_shape(fd, tet_amount) && error(5))
+	if ((check_shape(fd, tet_amount) == -1) && error(6))
 		return (-1);
 //	printf("tet amount:%hhd\n", tet_amount);
 	return (0);

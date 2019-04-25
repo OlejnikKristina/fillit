@@ -5,12 +5,13 @@
 	"version": "0.2.0",
 	"configurations": [
 
+
 		{
 			"name": "(lldb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/fillit",
-			"args": ["error_19"],
+			"args": ["test_3tetraminos.txt"],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
 			"environment": [],

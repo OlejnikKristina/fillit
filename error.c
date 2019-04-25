@@ -29,7 +29,7 @@ uint8_t	error(int error)
 	if (error == 1)
 		ft_putstr("Can not open a file\n");
 	else if (error == 2)
-		ft_putstr("File has not valid input\n");
+		ft_putstr("File has invalid input\n");
 	else if (error == 3)
 		ft_putstr("Not new line in the end of tetrominos\n");
 	else if (error == 4)
@@ -40,7 +40,7 @@ uint8_t	error(int error)
 		ft_putstr("Tetramino blox has to be attached to each other.\n");
 	}
 	else if (error == 6)
-		ft_putstr("\n");
+		ft_putstr("Incorrect shape of tetramino\n");
 	else
 		return (1);
 	return (1);
