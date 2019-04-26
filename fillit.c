@@ -13,6 +13,10 @@
 #include <stdio.h>
 #include "fillit.h"
 
+/*
+**clang -o fillit fillit.c error.c file_validation.c libft/libft.a
+*/
+
 int8_t	mem_alocation(t_tetro *tet[], short int size)
 {
 	int8_t	i;
@@ -27,45 +31,103 @@ int8_t	mem_alocation(t_tetro *tet[], short int size)
 	}
 	return (0);
 }
-/*
-**if (--size)
-**		set_tet_size(&tet[size], tet_arr, size);
-*/
-int8_t	set_tet_size(t_tetro *tet[], char tet_arr[][4][6], short int size)
-{
-	int8_t	i;
-	int		y;
-	int		x;
 
-	i = 0;
+/*
+** Function measures height of every tetramino.
+** And put it in struct's variable y 
+*/
+
+void	set_tet_height(t_tetro *tet[], char tet_arr[][4][6], short int size)
+{
+	int8_t	y;
+	int8_t	x;
+
 	y = 0;
 	x = 0;
-	printf("size %d\n", size);
-	while (i <= size)
+	tet[size]->y = 0;
+	while (y < 4)
 	{
-		tet[i]->y = 0;
+		x = 0;
+		while (x < 4)
+		{
+			if (tet_arr[0][y][x] == '#')
+			{
+				tet[size]->y += 1;
+				break ;
+			}
+			x++;
+		}
+		y++;
+	}
+	if (size)
+		set_tet_height(tet, &tet_arr[-1], size - 1);
+}
+
+/*
+** Function measures width of every tetramino.
+** And put it in struct's variable x
+*/
+
+void	set_tet_width(t_tetro *tet[], char tet_arr[][4][6], short int size)
+{
+	int8_t	y;
+	int8_t	x;
+
+	y = 0;
+	x = 0;
+	tet[size]->x = 0;
+	while (x < 4)
+	{
+		y = 0;
 		while (y < 4)
 		{
-			x = 0;
-			while (x < 4)
+			if (tet_arr[0][y][x] == '#')
 			{
-				if (tet_arr[i][y][x] == '#')
-				{
-					tet[i]->y += 1;
-					break ;
-				}
-				x++;
+				tet[size]->x += 1;
+				break ;
 			}
 			y++;
 		}
-		printf("tet[%d]->y = %d\n", i, tet[i]->y);
-		i++;
-		y = 0;
+		x++;
 	}
-	return (0);
+//	printf("size %d\n", size);
+//	printf("tet[%d]->y = %d\n", size, tet[size]->y);
+//	printf("tet[%d]->x = %d\n", size, tet[size]->x);
+	if (size)
+		set_tet_width(tet, &tet_arr[-1], size - 1);
 }
 
-int8_t	algoritm(char tet_arr[][4][6], short int size)
+void	cut_tet(t_tetro *tet[], char tet_arr[][4][6], short int size)
+{
+//	tet_mem_aloc();
+	int	i;
+
+	i = 0;
+	tet[size]->tet = (char **)ft_memalloc(sizeof(char *) * tet[size]->y);
+	while (i < tet[size]->x)
+	{
+		tet[size]->tet[i] = (char *)ft_strnew(sizeof(char) * tet[size]->x);
+		tet[size]->tet[i] = "Hello this simply works!";
+		printf("tet[%d]->tet[i] = %s\n", size, tet[size]->tet[i]);
+		i++;
+	}
+//	printf("size: %d", size);
+	if (size)
+		cut_tet(tet, &tet_arr[-1], size - 1);
+}
+
+
+/*
+**
+** Function "pick_data" gather info from 3 dimensional array. 
+** Which store entire valid map/file. (Uses automatic mem).
+** And put info about tetrominos in array of pointers to struts.
+** Every struct has info about: 
+** Tetrominos width (tet[0]->x), heghit (tet[0]->y)
+**
+*/
+
+int8_t	pick_data(char tet_arr[][4][6], short int size)
 {
 	t_tetro	*tet[size];
 	uint8_t	i;
@@ -74,9 +136,9 @@ int8_t	algoritm(char tet_arr[][4][6], short int size)
 	if (mem_alocation(tet, size) == -1)
 			return (-1);
 	tet[i]->letter = 'A';
-	printf("size1 %d\n", size);
-	set_tet_size(tet, tet_arr, size - 1);
-	printf(("letter: %c\n"), tet[2]->letter);
+	set_tet_height(tet, &tet_arr[size - 1], size - 1);
+	set_tet_width(tet, &tet_arr[size - 1], size - 1);
+	cut_tet(tet, &tet_arr[size - 1], size - 1);
 	return (0);
 }
 

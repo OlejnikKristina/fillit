@@ -83,7 +83,7 @@ int8_t	check_shape(const int fd, short int tet_amount)
 	}
 	if (check_tet_shape(&tetrs[tet_amount - 1], tet_amount - 1) == -1)
 		return (-1);
-	algoritm(tetrs, tet_amount);
+	pick_data(tetrs, tet_amount);
 	return (0);
 }
 

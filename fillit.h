@@ -58,6 +58,6 @@ const int			open_file(const char *file);
 int8_t				check_file(char *file);
 int8_t				check_map(const int fd, int8_t *tet_num, int line, int last_line);
 int8_t				check_shape(const int fd, short int tet_amount);
-int8_t				algoritm(char tet[][4][6], short int size);
+int8_t				pick_data(char tet_arr[][4][6], short int size);
 
 #endif
