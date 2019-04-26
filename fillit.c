@@ -90,9 +90,6 @@ void	set_tet_width(t_tetro *tet[], char tet_arr[][4][6], short int size)
 		}
 		x++;
 	}
-//	printf("size %d\n", size);
-//	printf("tet[%d]->y = %d\n", size, tet[size]->y);
-//	printf("tet[%d]->x = %d\n", size, tet[size]->x);
 	if (size)
 		set_tet_width(tet, &tet_arr[-1], size - 1);
 }
@@ -144,10 +141,6 @@ void	cut_tet(t_tetro *tet[], char tet_arr[][4][6], short int size)
 	printf("%s", tet_arr[0][2]);
 	printf("%s\n", tet_arr[0][3]);
 	find_coord(tet_arr, size, &coord_x, &coord_y);
-//	printf("tet[%d]->height = %d\n", size, tet[size]->height);
-//	printf("tet[%d]->width = %d\n", size, tet[size]->width);
-//	printf("coord_x = %d coord_y = %d\n\n", coord_x, coord_y);
-//	printf("tet_arr[0][coord_y]%s", tet_arr[0][coord_y]);
 	i = tet[size]->height;
 	while (index < tet[size]->height)
 	{
@@ -157,7 +150,8 @@ void	cut_tet(t_tetro *tet[], char tet_arr[][4][6], short int size)
 		i--;
 		index++;
 	}
-	printf("\nNEXT BLOCK\n\n");
+
+	printf("--------------------------\n");
 }
 
 void	tet_mem_aloc(t_tetro *tet[], char tet_arr[][4][6], short int size)
