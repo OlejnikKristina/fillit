@@ -25,8 +25,8 @@
 
 typedef struct		s_tetro
 {
-	int				x;
-	int				y;
+	int				width;
+	int				height;
 	char			**tet;
 	int				shape;
 	char			letter;
