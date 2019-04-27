@@ -57,7 +57,7 @@ int8_t	check_tet_shape(char tetrs[][4][6], short int amount)
 	return (0);
 }
 
-int8_t	check_shape(const int fd, short int tet_amount)
+int8_t	check_shape(const int fd, int8_t tet_amount)
 {
 	char	tetrs[tet_amount][4][6];
 	char	buff[5];
@@ -83,7 +83,7 @@ int8_t	check_shape(const int fd, short int tet_amount)
 	}
 	if (check_tet_shape(&tetrs[tet_amount - 1], tet_amount - 1) == -1)
 		return (-1);
-	pick_data(tetrs, tet_amount);
+	store_data(tetrs, tet_amount);
 	return (0);
 }
 
@@ -95,8 +95,8 @@ int8_t	check_shape(const int fd, short int tet_amount)
 
 int8_t	check_line(char buff[5], short int line)
 {
-	uint8_t				i;
-	static short int	hash;
+	uint8_t			i;
+	static uint8_t	hash;
 
 	i = 0;
 	if (line == 0)

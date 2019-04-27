@@ -13,7 +13,31 @@
 #include "libft/libft.h"
 #include "fillit.h"
 
-const int		open_file(const char *file)
+void	chr_replace(char *str, int target, int replace, int32_t len)
+{
+	if (-1 < len)
+	{
+		while (len)
+		{
+			if (*str == target)
+				*str = replace;
+			str++;
+			len--;
+		}
+	}
+	else
+	{
+		while (str)
+		{
+			if (*str == target)
+				*str = replace;
+			str++;
+		}
+	}
+	
+}
+
+int		open_file(const char *file)
 {
 	int		fd;
 
