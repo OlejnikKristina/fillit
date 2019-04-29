@@ -174,6 +174,32 @@ void	tet_mem_aloc(t_tetro *tet[], char tet_arr[][4][6], uint8_t size)
 		tet_mem_aloc(tet, &tet_arr[-1], size - 1);
 }
 
+char	**map_mem_aloc(char **map, int8_t map_size)
+{
+	uint8_t	i;
+
+	i = 0;
+	map = (char **)ft_memalloc(map_size);
+	while (i <= map_size)
+	{
+		map[i] = ft_strnew(map_size);
+		ft_memset((void *)map[i], '.', map_size);
+		i++;
+	}
+	return (map);
+}
+
+int8_t	check_tet(t_tetro *tet, char **map, int map_size, int8_t coord[2])
+{
+
+	return (0);
+}
+
+int		solver(t_tetro *tet[], char **map, int map_size, int8_t coord[2])
+{
+	check_tet(tet[0], map, map_size, coord);
+	return (0);
+}
 
 /*
 **
@@ -188,9 +214,11 @@ void	tet_mem_aloc(t_tetro *tet[], char tet_arr[][4][6], uint8_t size)
 int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 {
 	t_tetro	*tet[size];
-	uint8_t	i;
+	int8_t	map_size;
+	int8_t	coord[2];
+	char	**map;
 
-	i = 0;
+	map_size = kr_sqrt(size * 4);
 	if (struct_mem_aloc(tet, size) == -1)
 			return (-1);
 	size--;
@@ -198,7 +226,14 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	set_tet_width(tet, &tet_arr[size], size);
 	tet_mem_aloc(tet, &tet_arr[size], size);
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
+<<<<<<< HEAD
 	solver(tet, size + 1);
+=======
+	map_mem_aloc(map, map_size);
+	coord[0] = 0;
+	coord[0] = 1;
+	solver(tet, map, map_size, coord);
+>>>>>>> 2e193eafa62651e20a5c1728935bfc07aa20023b
 	return (0);
 }
 

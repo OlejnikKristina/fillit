@@ -13,9 +13,34 @@
 #include "libft/libft.h"
 #include "fillit.h"
 
+int		kr_sqrt(int nb)
+{
+	int	sqrt;
+	int	sqrt1;
+	int	res;
+	int	res1;
+
+	sqrt = 1;
+	sqrt1 = 2;
+	while (sqrt1 <= nb)
+	{
+		res = sqrt * sqrt;
+		if (res == nb)
+			return (res);
+		res1 = sqrt1 * sqrt1;
+		if (res1 == nb)
+			return (sqrt1);
+		if ((res < nb) && (nb < res1))
+			return (sqrt1);
+		sqrt++;
+		sqrt1++;
+	}
+	return (0);
+}
+
 void	chr_replace(char *str, int target, int replace, int32_t len)
 {
-	if (-1 < len)
+	if (0 < len)
 	{
 		while (len)
 		{
