@@ -198,6 +198,7 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	set_tet_width(tet, &tet_arr[size], size);
 	tet_mem_aloc(tet, &tet_arr[size], size);
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
+	solver(tet, size + 1);
 	return (0);
 }
 
