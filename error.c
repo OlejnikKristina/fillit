@@ -75,6 +75,18 @@ void	chr_replace(char *str, int target, int replace, int32_t len)
 	
 }
 
+void	arr_repl(char **map, int target, int replace, int map_size)
+{
+	int8_t i;
+
+	i = 0;
+	while (i < map_size)
+	{
+		chr_replace(map[i], target, replace, map_size);
+		i++;
+	}
+}
+
 int		open_file(const char *file)
 {
 	int		fd;

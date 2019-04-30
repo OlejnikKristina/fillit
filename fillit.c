@@ -205,6 +205,7 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	int8_t	map_size;
 	char	**map;
 
+	map = NULL;
 	map_size = kr_sqrt(size * 4);
 	if (struct_mem_aloc(tet, size) == -1)
 			return (-1);

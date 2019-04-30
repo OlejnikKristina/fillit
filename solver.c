@@ -12,13 +12,13 @@
 
 #include <stdio.h>
 #include "fillit.h"
-
-void	place_tet(t_tetro *tet, char **map, int map_size, int coord[2], char letter)
+//clang -o fillit fillit.c error.c file_validation.c solver.c  libft/libft.a
+void	place_tet(t_tetro *tet, char **map, int coord[2], char letter)
 {
 	int	y;
 	int	x;
 	int	line;
-	int token;
+	int	token;
 	
 	line = 0;
 	token = 0;
@@ -59,7 +59,7 @@ int8_t	check_tet(t_tetro *tet, char **map, int map_size, int coord[2])
 	token = 0;
 	success = 0;
 	check_height = tet->height + y;
-	while (y < check_height)
+	while ((y < check_height) && (y < map_size))
 	{
 		while (tet->tet[line][token] == '.')
 		{
@@ -90,11 +90,6 @@ int8_t	check_tet(t_tetro *tet, char **map, int map_size, int coord[2])
 	return (-1);
 }
 
-void	del_tet(char **map, int coord[2])
-{
-	
-}
-
 int		solver(t_tetro *tet[], char **map, int map_size, char letter)
 {
 	int success;
@@ -102,12 +97,8 @@ int		solver(t_tetro *tet[], char **map, int map_size, char letter)
 
 	coord[0] = 0;//y
 	coord[1] = 0;//x
+
 	printf("map_size %d\n", map_size);
-	if (letter == 'C')
-	{
-		coord[0] = 2;
-		coord[1] = 1;
-	}
 	success = check_tet(tet[0], map, map_size, coord);
 	while (success == -1)
 	{
@@ -115,27 +106,32 @@ int		solver(t_tetro *tet[], char **map, int map_size, char letter)
 		if (coord[1] == map_size)
 		{
 			if (coord[0] == (map_size - 1))
-				{printf("Make map bigger\n");return (-1);}
+			{
+				arr_repl(map, letter - 1, '.', map_size);
+				printf("Figures don\'t fit!\n");
+				print_map(map, map_size);
+
+				printf("Make map really bigger %c|%c\n", letter, letter - map_size);
+				solver(&tet[0], map, map_size, letter);
+				return (-1);
+			}
 			coord[1] = 0;
 			coord[0] += 1;
 		}
-		printf("coord x %d y %d\n", coord[1], coord[0]);
+	//	printf("coord x %d y %d\n", coord[1], coord[0]);
 		success = check_tet(tet[0], map, map_size, coord);
 	}
-	place_tet(tet[0], map, map_size, coord, letter);
+	place_tet(tet[0], map, coord, letter);
 	letter++;
 
 	
 	print_map(map, map_size);
-	if (letter != 'D')
+	if ((letter - (map_size)) != 'A')
 		solver(&tet[1], map, map_size, letter);
 	return (0);
 }
 
 /*
-
-
-
 
 
 

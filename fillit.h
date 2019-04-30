@@ -28,6 +28,7 @@ typedef struct		s_tetro
 	int				width;
 	int				height;
 	char			**tet;
+	char			letter;
 	int				shape;
 }					t_tetro;
 
@@ -59,6 +60,7 @@ int8_t				check_map(const int fd, int8_t *tet_num, int line, int last_line);
 int8_t				check_shape(const int fd, int8_t tet_amount);
 int8_t				store_data(char tet_arr[][4][6], uint8_t size);
 void				chr_replace(char *str, int target, int replace, int32_t len);
+void				arr_repl(char **map, int target, int replace, int map_size);
 int					solver(t_tetro *tet[], char **map, int map_size, char letter);
 int					kr_sqrt(int nb);
 
