@@ -214,7 +214,7 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	tet_mem_aloc(tet, size);
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
 	map = map_mem_aloc(map, map_size);
-	solver(tet, map, map_size);
+	solver(tet, map, map_size, 'A');
 	return (0);
 }
 

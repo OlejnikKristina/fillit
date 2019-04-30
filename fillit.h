@@ -59,8 +59,10 @@ int8_t				check_map(const int fd, int8_t *tet_num, int line, int last_line);
 int8_t				check_shape(const int fd, int8_t tet_amount);
 int8_t				store_data(char tet_arr[][4][6], uint8_t size);
 void				chr_replace(char *str, int target, int replace, int32_t len);
-int					solver(t_tetro *tet[], char **map, int map_size);
+int					solver(t_tetro *tet[], char **map, int map_size, char letter);
 int					kr_sqrt(int nb);
+
+void	print_map(char **map, int map_size);
 
 
 

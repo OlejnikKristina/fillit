@@ -13,6 +13,19 @@
 #include "libft/libft.h"
 #include "fillit.h"
 
+void	print_map(char **map, int map_size)
+{
+	int8_t i;
+
+	i = 0;
+	while(i < map_size)
+	{
+		printf("%s\n", map[i]);
+		i++;
+	}
+	
+}
+
 int		kr_sqrt(int nb)
 {
 	int	sqrt;

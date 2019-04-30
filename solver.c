@@ -12,13 +12,6 @@
 
 #include <stdio.h>
 #include "fillit.h"
-// 3 tetro =  12 char = sqrt(12) +-= 4;
-/*
-....
-....
-....
-....
-*/
 
 void	place_tet(t_tetro *tet, char **map, int map_size, int coord[2], char letter)
 {
@@ -58,14 +51,15 @@ int8_t	check_tet(t_tetro *tet, char **map, int map_size, int coord[2])
 	int	line;
 	int	token;
 	int success;
+	int check_height;
 
 	y = coord[0];
 	x = coord[1];
 	line = 0;
 	token = 0;
 	success = 0;
-
-	while ((y < map_size) && (y < tet->height))
+	check_height = tet->height + y;
+	while (y < check_height)
 	{
 		while (tet->tet[line][token] == '.')
 		{
@@ -96,7 +90,56 @@ int8_t	check_tet(t_tetro *tet, char **map, int map_size, int coord[2])
 	return (-1);
 }
 
-int		solver(t_tetro *tet[], char **map, int map_size)
+void	del_tet(char **map, int coord[2])
+{
+	
+}
+
+int		solver(t_tetro *tet[], char **map, int map_size, char letter)
+{
+	int success;
+	int	coord[2];
+
+	coord[0] = 0;//y
+	coord[1] = 0;//x
+	printf("map_size %d\n", map_size);
+	if (letter == 'C')
+	{
+		coord[0] = 2;
+		coord[1] = 1;
+	}
+	success = check_tet(tet[0], map, map_size, coord);
+	while (success == -1)
+	{
+		coord[1] += 1;
+		if (coord[1] == map_size)
+		{
+			if (coord[0] == (map_size - 1))
+				{printf("Make map bigger\n");return (-1);}
+			coord[1] = 0;
+			coord[0] += 1;
+		}
+		printf("coord x %d y %d\n", coord[1], coord[0]);
+		success = check_tet(tet[0], map, map_size, coord);
+	}
+	place_tet(tet[0], map, map_size, coord, letter);
+	letter++;
+
+	
+	print_map(map, map_size);
+	if (letter != 'D')
+		solver(&tet[1], map, map_size, letter);
+	return (0);
+}
+
+/*
+
+
+
+
+
+
+int		solver(t_tetro *tet[], char **map, int map_size, char letter)
 {
 	int success;
 	int	coord[2];
@@ -106,12 +149,40 @@ int		solver(t_tetro *tet[], char **map, int map_size)
 	coord[0] = 0;//y
 	coord[1] = 0;//x
 	num = 0;
-	letter = 'A';
 	printf("map_size %d\n", map_size);
 
 	while (num < 3)
 	{
-		while (success == -1)
+		success = check_tet(tet[num], map, map_size, coord);
+		if (success != -1)
+			place_tet(tet[num], map, map_size, coord, letter);
+		letter++;
+		num++;
+	}
+	if (check_tet(tet[num], map, map_size, coord) != -1)
+		place_tet(tet[num], map, map_size, coord, letter);
+	coord[1] += 1;
+	if (check_tet(tet[3], map, map_size, coord) != -1)
+		place_tet(tet[3], map, map_size, coord, 'B');
+
+	printf("%s\n", map[0]);
+	printf("%s\n", map[1]);
+	printf("%s\n", map[2]);
+	printf("%s\n", map[3]);
+	return (0);
+}
+
+
+
+
+
+
+
+
+
+
+
+while (success > -1)
 		{
 			coord[1] += 1;
 			if (coord[1] == map_size)
@@ -121,19 +192,13 @@ int		solver(t_tetro *tet[], char **map, int map_size)
 			}
 			success = check_tet(tet[num], map, map_size, coord);
 		}
-		place_tet(tet[num], map, map_size, coord, letter);
-		letter++;
-		num++;
-	}
 
-	printf("%s\n", map[0]);
-	printf("%s\n", map[1]);
-	printf("%s\n", map[2]);
-	printf("%s\n", map[3]);
-	return (0);
-}
 
-/*
+
+
+
+
+
 
 while (success == -1)
 	{
