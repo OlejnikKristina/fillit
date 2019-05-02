@@ -13,21 +13,12 @@
 #include <stdio.h>
 #include "fillit.h"
 
-/*solver
-while (y <= map_size)
-		{
-			map[i][y] = '.';
-			y++;
-		}
-**clang -o fillit fillit.c error.c file_validation.c solver.c libft/libft.a
-*/
-
 int8_t	struct_mem_aloc(t_tetro *tet[], uint8_t size)
 {
 	int8_t	i;
 
 	i = 0;
-	while (i < size)
+	while (i <= size)
 	{
 		tet[i] = (t_tetro *)malloc(sizeof(t_tetro));
 		if (tet[i] == NULL)
@@ -141,33 +132,33 @@ void	cut_tet(t_tetro *tet[], char tet_arr[][4][6], uint8_t size, char letter)
 	int8_t	index;
 
 	index = 0;
- /*	printf("%s", tet_arr[0][0]);
-	printf("%s", tet_arr[0][1]);
-	printf("%s", tet_arr[0][2]);
-	printf("%s\n", tet_arr[0][3]);*/
 	find_coord(tet_arr, &coord_x, &coord_y);
 	i = tet[0]->height;
+	tet[0]->letter = letter;
 	while (index < tet[0]->height)
-	{
+	{// MEMORY LEAK? 2
 		tet[0]->tet[index] = ft_strsub(tet_arr[0][coord_y], coord_x, tet[0]->width);
 		coord_y++;
 		tet[0]->tet[index][tet[0]->width] = '\0';
+		tet[0]->x = 0;
+		tet[0]->y = 0;
 		//printf("tet[0]->height %d\n", tet[0]->height);
 		chr_replace(tet[0]->tet[index], '#', letter, 4);
 	//	printf("\"%s\"\n", tet[0]->tet[index]);
 		i--;
 		index++;
 	}
+	printf("LETTER: \"%c\"\n", tet[0]->letter);
 //	printf("--------------------------\n");
 	if (size)
 		cut_tet(&tet[-1], &tet_arr[-1], size - 1, letter - 1);
 }
 
-void	tet_mem_aloc(t_tetro *tet[], uint8_t size)
-{
+void	str_mem_aloc(t_tetro *tet[], uint8_t size)
+{// MEMORY LEAK? 1
 	tet[size]->tet = (char **)ft_memalloc(sizeof(char *) * tet[size]->height);
 	if (size)
-		tet_mem_aloc(tet, size - 1);
+		str_mem_aloc(tet, size - 1);
 }
 
 
@@ -182,7 +173,6 @@ char	**map_mem_aloc(char **map, int map_size)
 	{
 		map[i] = ft_strnew(map_size);
 		map[i] = (char *)ft_memset((void *)map[i], '.', map_size);
-		//printf("%s\n", map[i]);
 		map[i][map_size + 1] = '\0';
 		i++;
 	}
@@ -212,16 +202,18 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	size--;
 	set_tet_height(tet, &tet_arr[size], size);
 	set_tet_width(tet, &tet_arr[size], size);
-	tet_mem_aloc(tet, size);
+	str_mem_aloc(tet, size);
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
+//	tet[size + 1]->tet[0][0] = '\0';
+//	printf("NULL??? %s\n", tet[size + 1]->tet[0]);
 	map = map_mem_aloc(map, map_size);
-	solver(tet, map, map_size, 'A');
+	solver(tet, map, map_size);
 	return (0);
 }
 
 int		main(int argc, char **argv)
 {
-	if ((argc != 2) && error(4))
+	if ((argc != 2) && error_msg(4))
 		return (0);
 	if ((check_file(argv[1]) == -1))
 		return (0);

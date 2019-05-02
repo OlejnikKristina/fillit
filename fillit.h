@@ -20,6 +20,7 @@
 # include <fcntl.h>
 # include <inttypes.h>
 # include <errno.h>
+# include <stdbool.h>
 #include <stdio.h>
 # define PROTECT(x) if (!(x)) return (NULL);
 
@@ -29,39 +30,28 @@ typedef struct		s_tetro
 	int				height;
 	char			**tet;
 	char			letter;
+	int				x;
+	int				y;
 	int				shape;
 }					t_tetro;
 
-
-typedef struct		s_tetra
+typedef	struct		s_map 
 {
-	short int	x[4];
-	short int	y[4];
-	char			letter;
-	struct s_tetra	*next;
-}					t_tetra;
+	char			**map;
+	int				map_size;
 
-typedef struct		s_tet
-{
-	uint8_t			shape;
-}					t_tet;
+}					t_map;
 
-struct				s_shape
-{
-	uint8_t			y[4];
-	uint8_t			x[4];
-	uint8_t			index;
-}					shape[19];
 
-uint8_t				error(int error);
+uint8_t				error_msg(int error);
 int					open_file(const char *file);
 int8_t				check_file(char *file);
 int8_t				check_map(const int fd, int8_t *tet_num, int line, int last_line);
 int8_t				check_shape(const int fd, int8_t tet_amount);
 int8_t				store_data(char tet_arr[][4][6], uint8_t size);
 void				chr_replace(char *str, int target, int replace, int32_t len);
-void				arr_repl(char **map, int target, int replace, int map_size);
-int					solver(t_tetro *tet[], char **map, int map_size, char letter);
+void				del_tet(char **map, int target, int replace, int map_size);
+int					solver(t_tetro *tet[], char **map, int map_size);
 int					kr_sqrt(int nb);
 
 void	print_map(char **map, int map_size);

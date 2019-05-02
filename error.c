@@ -75,7 +75,7 @@ void	chr_replace(char *str, int target, int replace, int32_t len)
 	
 }
 
-void	arr_repl(char **map, int target, int replace, int map_size)
+void	del_tet(char **map, int target, int replace, int map_size)
 {
 	int8_t i;
 
@@ -92,12 +92,12 @@ int		open_file(const char *file)
 	int		fd;
 
 	fd = open(file, O_RDONLY);
-	if ((fd == -1) && error(1))
+	if ((fd == -1) && error_msg(1))
 		return (-1);
 	return (fd);
 }
 
-uint8_t	error(int error)
+uint8_t		error_msg(int error)
 {
 	ft_putstr("Error. ");
 	if (error == 1)
@@ -128,16 +128,16 @@ int8_t	check_file(char *file)
 	var = 0;
 	for_norm = 0;
 	fd = open_file(file);
-	if ((fd == -1) && error(1))
+	if ((fd == -1) && error_msg(1))
 		return (-1);
 	if (((check_map(fd, &tet_amount, var, for_norm) == -1)
-	|| (tet_amount > 26)) && error(2))
+	|| (tet_amount > 26)) && error_msg(2))
 		return (-1);
 	close(fd);
 	fd = open_file(file);
-	if ((fd == -1) && error(1))
+	if ((fd == -1) && error_msg(1))
 		return (-1);
-	if ((check_shape(fd, tet_amount) == -1) && error(2))
+	if ((check_shape(fd, tet_amount) == -1) && error_msg(2))
 		return (-1);
 	return (0);
 }
