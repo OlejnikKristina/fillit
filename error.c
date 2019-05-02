@@ -99,8 +99,8 @@ int		open_file(const char *file)
 
 uint8_t		error_msg(int error)
 {
-	ft_putstr("Error. ");
-	if (error == 1)
+	ft_putstr("error");
+/*	if (error == 1)
 		ft_putstr("Can not open a file\n");
 	else if (error == 2)
 		ft_putstr("File has invalid input\n");
@@ -113,7 +113,7 @@ uint8_t		error_msg(int error)
 	else if (error == 6)
 		ft_putstr("Incorrect shape of tetramino\n");
 	else
-		return (1);
+		return (1);*/
 	return (1);
 }
 

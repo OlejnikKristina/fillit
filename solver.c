@@ -125,14 +125,24 @@ bool	find_C(t_tetro *tet, char **map, int map_size)
 }
 
 
-int		solver(t_tetro *tet[], char **map, int map_size)
+int		solver(t_tetro *tet[], char **map, int map_size, uint8_t tet_amount)
 {
 	int success;
 	int	res;
 
-	printf("map_size %d\n", map_size);
-	if ((tet[0]->x == 0) && (tet[0]->y == 0))
+	success = -1;
+	printf("tet amount: %hhu\n", tet_amount);
+	if (tet[0]->first_try)
+	{
+		//printf("Check before increament!\n");
+		tet[0]->x = 0;
+		tet[0]->y = 0;
+		tet[0]->first_try = false;
 		success = check_tet(tet[0], map, map_size);
+		//place_tet(tet[0], map);
+		//printf("D tet block x=%d y=%d, success %d\n", tet[0]->x, tet[0]->y, success);
+	}
+	//printf("LETTER: %c x=%d y=%d\n", tet[0]->letter, tet[0]->x, tet[0]->y);
 	while (success == -1)
 	{
 		tet[0]->x += 1;
@@ -140,26 +150,20 @@ int		solver(t_tetro *tet[], char **map, int map_size)
 		{
 			if (tet[0]->y == (map_size - 1))
 			{
-				res = find_C(tet[-1], map, map_size);
-				del_tet(map, tet[-1]->letter, '.', map_size);
-			//	solver(&tet[-1], map, map_size);
-			//	++tet[-1]->x;
-			/*
-				if (tet[-1]->x == map_size)
+				if (tet[0]->letter == 'A')
 				{
-					tet[-1]->x = 0;
-					++tet[-1]->y;
-					if (tet[-1]->y == (map_size - 1))
-						{return (-1);}
-				}*/
-				printf("x=%d y=%d res: %d\n", tet[-1]->x, tet[-1]->y, res);
-			//	solver(&tet[-1], map, map_size);
-				printf("Figures don\'t fit!\n");
-				return (-1);
-				print_map(map, map_size);
+					printf("Make map really bigger!!!\n");
+					return (-2);
+				}
+				res = find_C(tet[-1], map, map_size);
+				//printf("FIND pos: x=%d y=%d\n", tet[-1]->x, tet[-1]->y);
+				del_tet(map, tet[-1]->letter, '.', map_size);
+				print_map(map, map_size);ft_putchar('\n');
+				if (solver(&tet[-1], map, map_size, tet_amount) == -2)
+					return (-2);
 
-				printf("Make map really bigger %c|%c\n", tet[0]->letter, tet[-1]->letter+ - map_size);
-			//	solver(&tet[0], map, map_size);
+				//printf("x=%d y=%d res: %d\n", tet[0]->x, tet[0]->y, res);
+				//printf("Figures don\'t fit!\n");
 				return (-1);
 			}
 			tet[0]->x = 0;
@@ -168,14 +172,62 @@ int		solver(t_tetro *tet[], char **map, int map_size)
 		success = check_tet(tet[0], map, map_size);
 	}
 	place_tet(tet[0], map);
-	print_map(map, map_size);
-	if (tet[1]->tet[0] != NULL)
-		solver(&tet[1], map, map_size);
+	print_map(map, map_size);ft_putchar('\n');
+	if ((tet[0]->letter - tet_amount) == 'A')
+		printf("Segfault?? %c\n", ((tet[0]->letter - tet_amount) != 'A'));
+	if ((tet[0]->letter - tet_amount) != 'A')
+	{
+		//printf("Segfault??\n");
+		tet[1]->x = 0;
+		tet[1]->y = 0;
+		if (solver(&tet[1], map, map_size, tet_amount)== -2)
+			return (-2);
+	}
 	return (0);
 }
 
 
+
+
+
+
+
+		//print_map(map, map_size);
+		//printf("null (?) %s\n", tet[1]->tet[0]);
+	/*	if(tet[0]->letter == 'D')
+		{
+			place_tet(tet[0], map);
+			print_map(map, map_size);
+		}*/
+		//return (0);
+
 /*
+
+#...
+#...
+#...
+#...
+
+....
+....
+##..
+##..
+
+###.
+#...
+....
+....
+
+.#..
+.#..
+##..
+....
+
+
+
+
+
+
 
 success = -1;
 	tet[1]->x = 3;
@@ -185,4 +237,25 @@ success = -1;
 	place_tet(tet[1], map);
 	print_map(map, map_size);
 	return (-1);
+
+....
+##..
+.#..
+.#..
+
+....
+####
+....
+....
+
+#...
+###.
+....
+....
+
+....
+##..
+.##.
+....
+
 */

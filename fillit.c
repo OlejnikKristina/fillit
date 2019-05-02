@@ -12,13 +12,14 @@
 
 #include <stdio.h>
 #include "fillit.h"
+# include <inttypes.h>
 
 int8_t	struct_mem_aloc(t_tetro *tet[], uint8_t size)
 {
 	int8_t	i;
 
 	i = 0;
-	while (i <= size)
+	while (i < size)
 	{
 		tet[i] = (t_tetro *)malloc(sizeof(t_tetro));
 		if (tet[i] == NULL)
@@ -142,13 +143,14 @@ void	cut_tet(t_tetro *tet[], char tet_arr[][4][6], uint8_t size, char letter)
 		tet[0]->tet[index][tet[0]->width] = '\0';
 		tet[0]->x = 0;
 		tet[0]->y = 0;
+		tet[0]->first_try = true;
 		//printf("tet[0]->height %d\n", tet[0]->height);
 		chr_replace(tet[0]->tet[index], '#', letter, 4);
 	//	printf("\"%s\"\n", tet[0]->tet[index]);
 		i--;
 		index++;
 	}
-	printf("LETTER: \"%c\"\n", tet[0]->letter);
+//	printf("LETTER: \"%c\"\n", tet[0]->letter);
 //	printf("--------------------------\n");
 	if (size)
 		cut_tet(&tet[-1], &tet_arr[-1], size - 1, letter - 1);
@@ -179,8 +181,42 @@ char	**map_mem_aloc(char **map, int map_size)
 	return (map);
 }
 
+void	ft_arr_del(char **str_arr, int32_t size)
+{
+	int32_t	i;
+
+	i = 0;
+	while (i <= size)
+	{
+		ft_strdel(&str_arr[i]);
+		i++;
+	}
+}
+
+void	turn_back_time(t_tetro *tet[], uint8_t size)
+{
+	tet[0]->first_try = true;
+	tet[0]->x = 0;
+	tet[0]->y = 0;
+	if (size)
+		turn_back_time(&tet[-1], size - 1);
+}
+
+void	free_arr(t_tetro *tet[], uint8_t size)
+{
+	uint8_t	i;
+
+	i = 0;
+	while(i <= size)
+	{
+		ft_arr_del(tet[i]->tet, tet[i]->height);
+		i++;
+	}
+	
+}
+
 /*
-**
+** Varievble size = amount of tetromino
 ** Function "pick_data" gather info from 3 dimensional array. 
 ** Which store entire valid map/file. (Uses automatic mem).
 ** And put info about tetrominos in array of pointers to struts.
@@ -193,10 +229,13 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 {
 	t_tetro	*tet[size];
 	int8_t	map_size;
+	int8_t	result;
 	char	**map;
 
 	map = NULL;
 	map_size = kr_sqrt(size * 4);
+//	printf("TET AMOUNT %d\n", size);
+//	printf("MAP SIZE %d\n", map_size);
 	if (struct_mem_aloc(tet, size) == -1)
 			return (-1);
 	size--;
@@ -204,10 +243,25 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	set_tet_width(tet, &tet_arr[size], size);
 	str_mem_aloc(tet, size);
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
-//	tet[size + 1]->tet[0][0] = '\0';
-//	printf("NULL??? %s\n", tet[size + 1]->tet[0]);
+
 	map = map_mem_aloc(map, map_size);
-	solver(tet, map, map_size);
+	result = solver(tet, map, map_size, size);
+	while (result == -2)
+	{
+		printf("Call solver one more time\n");
+		ft_arr_del(map, map_size);
+		turn_back_time(&tet[size], size);
+		tet[0]->first_try = true;
+		map_size += 1;
+		map = map_mem_aloc(map, map_size);
+		result = solver(tet, map, map_size, size);
+	}
+//	sleep(30);
+//	free_arr(tet, size);
+	printf("------------\n");
+	print_map(map, map_size);
+	ft_arr_del(map, map_size);
+//	sleep(20);
 	return (0);
 }
 
@@ -217,6 +271,7 @@ int		main(int argc, char **argv)
 		return (0);
 	if ((check_file(argv[1]) == -1))
 		return (0);
-	printf("Success\n");
+	//sleep(15);
+	//printf("Success\n");
 	return (0);
 }
