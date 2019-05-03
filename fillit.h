@@ -22,7 +22,9 @@
 # include <errno.h>
 # include <stdbool.h>
 #include <stdio.h>
-# define PROTECT(x) if (!(x)) return (NULL);
+# define TET_NOT_FIT -2
+# define TOO_SMALL_MAP -1
+# define SUCCESS 1
 
 //# define ARR_SIZE sizeof(tet) / sizeof(s_tetro)
 
@@ -41,8 +43,8 @@ typedef	struct		s_map
 {
 	char			**map;
 	int				size;
-	uint8_t			tet_amount;
-
+	int			tet_amount;
+	uint8_t			tet_index;
 }					t_map;
 
 
@@ -54,8 +56,9 @@ int8_t				check_shape(const int fd, int8_t tet_amount);
 int8_t				store_data(char tet_arr[][4][6], uint8_t size);
 void				chr_replace(char *str, int target, int replace, int32_t len);
 void				del_tet(char **map, int target, int replace, int map_size);
-bool				solver(t_tetro *tet[], char **map, int map_size, uint8_t tet_amount);
+int8_t				solver(t_tetro *tet[], t_map *map);
 int					kr_sqrt(int nb);
+bool				find_C(t_tetro *tet, char **map, int map_size);
 
 void	print_map(char **map, int map_size);
 
