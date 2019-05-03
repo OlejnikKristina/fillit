@@ -24,6 +24,8 @@
 #include <stdio.h>
 # define PROTECT(x) if (!(x)) return (NULL);
 
+//# define ARR_SIZE sizeof(tet) / sizeof(s_tetro)
+
 typedef struct		s_tetro
 {
 	int				width;

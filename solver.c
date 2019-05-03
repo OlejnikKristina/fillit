@@ -125,7 +125,7 @@ bool	find_C(t_tetro *tet, char **map, int map_size)
 }
 
 
-int		solver(t_tetro *tet[], char **map, int map_size, uint8_t tet_amount)
+int		solver(t_tetro tet[], char **map, int map_size, uint8_t tet_amount)
 {
 	int success;
 	int	res;
