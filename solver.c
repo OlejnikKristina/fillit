@@ -123,7 +123,38 @@ bool	find_C(t_tetro *tet, char **map, int map_size)
 	}
 	return (true);
 }
+/*
+bool	check_block(t_tetro *tet[], char **map, int map_size, uint8_t tet_amount)
+{
+	bool found_place;
+	int	res;
 
+	while (found_place == false)
+	{
+		tet[0]->x += 1;
+		if (tet[0]->x == map_size)
+		{
+			if (tet[0]->y == (map_size - 1))
+			{
+				if (tet[0]->letter == 'A')
+				{
+					printf("Make map really bigger!!!\n");
+					return (false);
+				}
+				res = find_C(tet[-1], map, map_size);
+				//printf("FIND pos: x=%d y=%d\n", tet[-1]->x, tet[-1]->y);
+				del_tet(map, tet[-1]->letter, '.', map_size);
+				print_map(map, map_size);ft_putchar('\n');
+				if (solver(&tet[-1], map, map_size, tet_amount) == false)
+					return (false);
+			}
+			tet[0]->x = 0;
+			tet[0]->y += 1;
+		}
+		found_place = can_place(tet[0], map, map_size);
+	}
+	return (true);
+}*/
 
 bool		solver(t_tetro *tet[], char **map, int map_size, uint8_t tet_amount)
 {

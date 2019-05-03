@@ -246,7 +246,7 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 
 	map = map_mem_aloc(map, map_size);
 	result = solver(tet, map, map_size, size);
-	while (result == false	)
+	while (result == false)
 	{
 		printf("Call solver one more time\n");
 		ft_arr_del(map, map_size);

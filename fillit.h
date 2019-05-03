@@ -41,8 +41,8 @@ typedef	struct		s_map
 {
 	char			**map;
 	int				size;
-	uint8_t			tet_amount;
-
+	int				tet_amount;
+	uint8_t			tet_index;
 }					t_map;
 
 
