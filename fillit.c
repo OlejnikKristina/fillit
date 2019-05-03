@@ -227,7 +227,7 @@ void	free_arr(t_tetro *tet[], uint8_t size)
 
 int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 {
-	t_tetro	tet[size];
+	t_tetro	*tet[size];
 	int8_t	map_size;
 	int8_t	result;
 	char	**map;
@@ -236,27 +236,27 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	map_size = kr_sqrt(size * 4);
 //	printf("TET AMOUNT %d\n", size);
 //	printf("MAP SIZE %d\n", map_size);
-//	if (struct_mem_aloc(tet, size) == -1)
-//			return (-1);
+	if (struct_mem_aloc(tet, size) == -1)
+			return (-1);
 	size--;
-	set_tet_height(&tet, &tet_arr[size], size);
-	set_tet_width(&tet, &tet_arr[size], size);
-	str_mem_aloc(&tet, size);
+	set_tet_height(tet, &tet_arr[size], size);
+	set_tet_width(tet, &tet_arr[size], size);
+	str_mem_aloc(tet, size);
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
 
 	map = map_mem_aloc(map, map_size);
 	result = solver(tet, map, map_size, size);
-	while (result == -2)
+	while (result == false	)
 	{
 		printf("Call solver one more time\n");
 		ft_arr_del(map, map_size);
 		turn_back_time(&tet[size], size);
-		tet[0].first_try = true;
+		tet[0]->first_try = true;
 		map_size += 1;
 		map = map_mem_aloc(map, map_size);
-		result = solver(&tet, map, map_size, size);
+		result = solver(tet, map, map_size, size);
 	}
-	free_arr(&tet, size);
+	free_arr(tet, size);
 	printf("------------\n");
 	print_map(map, map_size);
 	ft_arr_del(map, map_size);
@@ -266,12 +266,11 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 
 int		main(int argc, char **argv)
 {
-	sleep(2);
+	//sleep(2);
 	if ((argc != 2) && error_msg(4))
 		return (0);
 	if ((check_file(argv[1]) == -1))
 		return (0);
-	sleep(10);
-	//printf("Success\n");
+	//sleep(10);
 	return (0);
 }
