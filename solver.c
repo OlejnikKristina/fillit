@@ -232,18 +232,57 @@ int8_t		solver(t_tetro *tet[], t_map *map)
 
 
 
+int8_t		solver(t_tetro *tet[], t_map *map)
+{
+	bool found_place;
+	int	res;
 
-
-
-
-success = -1;
-	tet[1]->x = 3;
-	tet[1]->y = 0;
-	res = can_place(tet[1], map, map_size);
-	printf("x=%d y=%d res: %d\n", tet[1]->x, tet[1]->y, res);
-	place_tet(tet[1], map);
-	print_map(map, map_size);
-	return (-1);
+	printf("tet amount: %d\n", map->tet_amount);
+	printf("map size: %d\n", map->size);
+	printf("first try %d ???\n", tet[0]->first_try);
+	if (tet[0]->first_try)
+	{
+		//printf("Check before increament!\n");
+		tet[0]->x = 0;
+		tet[0]->y = 0;
+		tet[0]->first_try = false;
+		found_place = can_place(tet[0], map->map, map->size);
+		//place_tet(tet[0], map);
+		//printf("D tet block x=%d y=%d, found_place %d\n", tet[0]->x, tet[0]->y, found_place);
+	}
+	//printf("LETTER: %c x=%d y=%d\n", tet[0]->letter, tet[0]->x, tet[0]->y);
+	while (found_place == false)
+	{
+		tet[0]->x += 1;
+		if (tet[0]->x == map->size)
+		{
+			if (tet[0]->y == (map->size - 1))
+			{
+				if (tet[0]->letter == 'A')
+				{
+					printf("Hmmm ... %c\n", 'B' - map->tet_amount);
+					printf("Make map really bigger!!!\n");ft_putchar('\n');
+					print_map(map->map, map->size);ft_putchar('\n');
+					return (TOO_SMALL_MAP);
+				}
+				map->tet_index = tet[-1]->letter - 'A';
+				return (TET_NOT_FIT);
+			}
+			tet[0]->x = 0;
+			tet[0]->y += 1;
+		}
+		found_place = can_place(tet[0], map->map, map->size);
+	}
+	place_tet(tet[0], map->map);
+	print_map(map->map, map->size);ft_putchar('\n');
+	if (((tet[1]->letter + 1) - map->tet_amount) != 'A')
+	{
+		tet[1]->x = 0;
+		tet[1]->y = 0;
+		return(solver(&tet[1], map));
+	}
+	return (SUCCESS);
+}
 
 ....
 ##..
