@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include "fillit.h"
 # include <inttypes.h>
-
+#include <time.h>
 int8_t	struct_mem_aloc(t_tetro *tet[], uint8_t size)
 {
 	int8_t	i;
@@ -171,7 +171,7 @@ char	**map_mem_aloc(char **map, int map_size)
 
 	i = 0;
 	map = (char **)ft_memalloc(sizeof(char *) * (map_size + 1));
-	while (i <= map_size)
+	while (i < map_size)
 	{
 		map[i] = ft_strnew(map_size);
 		map[i] = (char *)ft_memset((void *)map[i], '.', map_size);
@@ -181,12 +181,12 @@ char	**map_mem_aloc(char **map, int map_size)
 	return (map);
 }
 
-void	ft_arr_del(char **str_arr, int32_t size)
+void	ft_arr_del(char **str_arr, int8_t size)
 {
-	int32_t	i;
+	int8_t	i;
 
 	i = 0;
-	while (i <= size)
+	while (i < size)
 	{
 		ft_strdel(&str_arr[i]);
 		i++;
@@ -215,6 +215,31 @@ void	free_arr(t_tetro *tet[], uint8_t size)
 	
 }
 
+
+int8_t		set_map_size(t_tetro *tet[], uint8_t tet_amount)
+{
+	uint8_t	i;
+	int8_t	map_size;
+	uint8_t min_map_size;
+
+	map_size = kr_sqrt(tet_amount * 4);
+	if (map_size == 2)
+		if((tet[0]->width != 2) && (tet[0]->height != 2))
+			return (3);
+	i = 0;
+	if (map_size < 4)
+	{
+		while(i < tet_amount)
+		{
+			if ((tet[i]->height == 1 && tet[i]->width == 4) ||
+				(tet[i]->width == 1 && tet[i]->height == 4))
+				return (4);
+			i++;
+		}
+	}
+	return (map_size);
+}
+
 /*
 ** Varievble size = amount of tetromino
 ** Function "pick_data" gather info from 3 dimensional array. 
@@ -230,16 +255,12 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	t_tetro	*tet[size];
 	int8_t	map_size;
 	int8_t	result;
-	int		res;
-	t_map	*map;
-//	char	**map;
+	char	**map;
 
-	map->map = NULL;
-	map_size = kr_sqrt(size * 4);
-	map->size = map_size;
-	map->tet_amount = size - 1;
-//	printf("TET AMOUNT %d\n", size);
+	map = NULL;
+
 //	printf("MAP SIZE %d\n", map_size);
+//	map_size = kr_sqrt((size) * 4);
 	if (struct_mem_aloc(tet, size) == -1)
 			return (-1);
 	size--;
@@ -248,72 +269,42 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	str_mem_aloc(tet, size);
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
 
-	map->map = map_mem_aloc(map->map, map_size);
-	result = solver(tet, map);
-	printf("LETTER: %d\n", tet[1]->letter - 'A');
-	printf("LETTER: %c\n", tet[0]->letter);
-	printf("first try %d 	\n", tet[0]->first_try);
-	while ((result == TOO_SMALL_MAP) || (result == TET_NOT_FIT))
+	map_size = kr_sqrt((size + 1) * 4);
+//	map_size = set_map_size(tet, size + 1);
+//	printf("MAP SIZE %d\n", map_size);
+//map_size = 8;
+int i = 0;
+	map = map_mem_aloc(map, map_size );
+	result = solver(tet, map, map_size, size, i);
+	while (result == SMALL_MAP)
 	{
-		if (result == TOO_SMALL_MAP)
-		{
-			printf("TOO_SMALL_MAP\n");
-			ft_arr_del(map->map, map->size);
-			turn_back_time(&tet[size], size);
-			tet[0]->first_try = true;
-			map->size += 1;
-			map->map = map_mem_aloc(map->map, map->size);
-		//	print_map(map->map, map->size);ft_putchar('\n');
-			result =  solver(tet, map);
-			break ;
-		}
-		else if (result == TET_NOT_FIT)
-		{
-			printf("TET NOT FIT\n");
-			res = find_C(tet[map->tet_index], map->map, map->size);
-			printf("Num of tet %d LETTER: %c, x=%d y=%d\n", map->tet_index,
-			tet[map->tet_index]->letter, tet[map->tet_index]->x,
-			tet[map->tet_index]->y);
-			printf("first try %d\n", tet[map->tet_index]->first_try);
-			del_tet(map->map, tet[map->tet_index]->letter, '.', map->size);
-			result = solver(&tet[map->tet_index], map);
-			continue ;
-		}
-		result =  solver(tet, map);
+		printf("Call solver one more time\n");
+		ft_arr_del(map, map_size);
+		turn_back_time(&tet[size], size);
+		tet[0]->first_try = true;
+		map_size += 1;
+		map = map_mem_aloc(map, map_size);
+		result = solver(tet, map, map_size, size, i);
 	}
 	free_arr(tet, size);
-	printf("------------\n");
-	print_map(map->map, map->size);
-	ft_arr_del(map->map, map->size);
+	printf("Tet amount: %d\n", size + 1);
+//	printf("------------\n");
+	print_map(map, map_size);
+	ft_arr_del(map, map_size);
 //	sleep(20);
 	return (0);
 }
 
 int		main(int argc, char **argv)
 {
-	//sleep(2);
 	if ((argc != 2) && error_msg(4))
 		return (0);
+	clock_t begin = clock();
 	if ((check_file(argv[1]) == -1))
 		return (0);
+	clock_t end = clock();
+	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("\033[36mtime:%f\n\033[0m", time_spent);
 	//sleep(10);
 	return (0);
 }
-/*
-printf("Call solver one more time\n");
-		ft_arr_del(map, map->size);
-		turn_back_time(&tet[size], size);
-		tet[0]->first_try = true;
-		map->size += 1;
-		map = map_mem_aloc(map, map->size);
-		result = solver(tet, map, map->size, size);
-*/
-
-/*
-res = find_C(tet[-1], map, map->size);
-//printf("FIND pos: x=%d y=%d\n", tet[-1]->x, tet[-1]->y);
-del_tet(map, tet[-1]->letter, '.', map->size);
-print_map(map, map->size);ft_putchar('\n');
-if (solver(&tet[-1], map, map->size, tet_amount) == false)
-return (false);
-*/
