@@ -6,7 +6,7 @@
 /*   By: krioliin <krioliin@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/14 20:28:10 by krioliin       #+#    #+#                */
-/*   Updated: 2019/04/15 21:12:54 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/07 16:05:30 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "fillit.h"
 # include <inttypes.h>
 #include <time.h>
+
 int8_t	struct_mem_aloc(t_tetro *tet[], uint8_t size)
 {
 	int8_t	i;
@@ -163,8 +164,6 @@ void	str_mem_aloc(t_tetro *tet[], uint8_t size)
 		str_mem_aloc(tet, size - 1);
 }
 
-
-
 char	**map_mem_aloc(char **map, int map_size)
 {
 	int8_t	i;
@@ -215,31 +214,6 @@ void	free_arr(t_tetro *tet[], uint8_t size)
 	
 }
 
-
-int8_t		set_map_size(t_tetro *tet[], uint8_t tet_amount)
-{
-	uint8_t	i;
-	int8_t	map_size;
-	uint8_t min_map_size;
-
-	map_size = kr_sqrt(tet_amount * 4);
-	if (map_size == 2)
-		if((tet[0]->width != 2) && (tet[0]->height != 2))
-			return (3);
-	i = 0;
-	if (map_size < 4)
-	{
-		while(i < tet_amount)
-		{
-			if ((tet[i]->height == 1 && tet[i]->width == 4) ||
-				(tet[i]->width == 1 && tet[i]->height == 4))
-				return (4);
-			i++;
-		}
-	}
-	return (map_size);
-}
-
 /*
 ** Varievble size = amount of tetromino
 ** Function "pick_data" gather info from 3 dimensional array. 
@@ -258,9 +232,6 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	char	**map;
 
 	map = NULL;
-
-//	printf("MAP SIZE %d\n", map_size);
-//	map_size = kr_sqrt((size) * 4);
 	if (struct_mem_aloc(tet, size) == -1)
 			return (-1);
 	size--;
@@ -270,28 +241,23 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
 
 	map_size = kr_sqrt((size + 1) * 4);
-//	map_size = set_map_size(tet, size + 1);
-//	printf("MAP SIZE %d\n", map_size);
-//map_size = 8;
-int i = 0;
+	int i = 0;
 	map = map_mem_aloc(map, map_size );
-	result = solver(tet, map, map_size, size, i);
+	result = solver(tet, map, map_size, size, &i);
 	while (result == SMALL_MAP)
 	{
 		printf("Call solver one more time\n");
 		ft_arr_del(map, map_size);
 		turn_back_time(&tet[size], size);
-		tet[0]->first_try = true;
 		map_size += 1;
+		i = 0;
 		map = map_mem_aloc(map, map_size);
-		result = solver(tet, map, map_size, size, i);
+		result = solver(tet, map, map_size, size, &i);
 	}
-	free_arr(tet, size);
 	printf("Tet amount: %d\n", size + 1);
-//	printf("------------\n");
+	free_arr(tet, size);
 	print_map(map, map_size);
 	ft_arr_del(map, map_size);
-//	sleep(20);
 	return (0);
 }
 
@@ -305,6 +271,5 @@ int		main(int argc, char **argv)
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 	printf("\033[36mtime:%f\n\033[0m", time_spent);
-	//sleep(10);
 	return (0);
 }

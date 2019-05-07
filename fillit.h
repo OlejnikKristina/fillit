@@ -6,7 +6,7 @@
 /*   By: krioliin <krioliin@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/14 20:28:18 by krioliin       #+#    #+#                */
-/*   Updated: 2019/04/15 21:15:45 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/07 16:02:45 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # define TET_NOT_FIT -2
 # define SMALL_MAP -1
 # define SUCCESS 1
-//# define ARR_SIZE sizeof(tet) / sizeof(s_tetro)
+# define N 42000
 
 typedef struct		s_tetro
 {
@@ -56,7 +56,7 @@ int8_t				check_shape(const int fd, int8_t tet_amount);
 int8_t				store_data(char tet_arr[][4][6], uint8_t size);
 void				chr_replace(char *str, int target, int replace, int32_t len);
 void				del_tet(char **map, int target, int replace, int map_size);
-int8_t				solver(t_tetro *tet[], char **map, int map_size, uint8_t tet_amount, int i);
+int8_t				solver(t_tetro *tet[], char **map, int map_size, uint8_t tet_amount, int *i);
 int					kr_sqrt(int nb);
 
 void	print_map(char **map, int map_size);
