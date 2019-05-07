@@ -6,7 +6,7 @@
 /*   By: krioliin <krioliin@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/14 20:28:10 by krioliin       #+#    #+#                */
-/*   Updated: 2019/05/07 16:14:45 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/07 16:20:02 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,6 @@
 #include "fillit.h"
 # include <inttypes.h>
 #include <time.h>
-
-int8_t	struct_mem_aloc(t_tetro *tet[], uint8_t size)
-{
-	int8_t	i;
-
-	i = 0;
-	while (i < size)
-	{
-		tet[i] = (t_tetro *)malloc(sizeof(t_tetro));
-		if (tet[i] == NULL)
-			return (-1);
-		i++;
-	}
-	return (0);
-}
 
 /*
 ** Function measures height of every tetramino.
@@ -232,8 +217,6 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	char	**map;
 
 	map = NULL;
-//	if (struct_mem_aloc(tet, size) == -1)
-//			return (-1);
 	size--;
 	set_tet_height(tet, &tet_arr[size], size);
 	set_tet_width(tet, &tet_arr[size], size);
@@ -258,6 +241,7 @@ int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 	free_arr(tet, size);
 	print_map(map, map_size);
 	ft_arr_del(map, map_size);
+	sleep(10);
 	return (0);
 }
 
@@ -265,6 +249,7 @@ int		main(int argc, char **argv)
 {
 	if ((argc != 2) && error_msg(4))
 		return (0);
+	sleep(10);
 	clock_t begin = clock();
 	if ((check_file(argv[1]) == -1))
 		return (0);

@@ -6,7 +6,7 @@
 /*   By: krioliin <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/25 19:25:10 by krioliin       #+#    #+#                */
-/*   Updated: 2019/05/07 16:15:53 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/07 16:18:47 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ int8_t		solver(t_tetro tet[], char **map, int map_size, uint8_t tet_amount, int 
 		else
 			tet[0].x += 1;
 		if (*i >= N)
-			return (-1);
+			{printf("Make map bigger\n");return (-1);}
 		if (tet[0].x == map_size)
 		{
 			if (tet[0].y == (map_size - 1))
