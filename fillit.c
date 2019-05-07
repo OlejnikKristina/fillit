@@ -6,7 +6,7 @@
 /*   By: krioliin <krioliin@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/14 20:28:10 by krioliin       #+#    #+#                */
-/*   Updated: 2019/05/07 16:05:30 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/07 16:14:45 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,14 @@ int8_t	struct_mem_aloc(t_tetro *tet[], uint8_t size)
 ** And put it in struct's variable y 
 */
 
-void	set_tet_height(t_tetro *tet[], char tet_arr[][4][6], uint8_t size)
+void	set_tet_height(t_tetro tet[], char tet_arr[][4][6], uint8_t size)
 {
 	int8_t	y;
 	int8_t	x;
 
 	y = 0;
 	x = 0;
-	tet[size]->height = 0;
+	tet[size].height = 0;
 	while (y < 4)
 	{
 		x = 0;
@@ -50,7 +50,7 @@ void	set_tet_height(t_tetro *tet[], char tet_arr[][4][6], uint8_t size)
 		{
 			if (tet_arr[0][y][x] == '#')
 			{
-				tet[size]->height += 1;
+				tet[size].height += 1;
 				break ;
 			}
 			x++;
@@ -66,14 +66,14 @@ void	set_tet_height(t_tetro *tet[], char tet_arr[][4][6], uint8_t size)
 ** And put it in struct's variable x
 */
 
-void	set_tet_width(t_tetro *tet[], char tet_arr[][4][6], uint8_t size)
+void	set_tet_width(t_tetro tet[], char tet_arr[][4][6], uint8_t size)
 {
 	int8_t	y;
 	int8_t	x;
 
 	y = 0;
 	x = 0;
-	tet[size]->width = 0;
+	tet[size].width = 0;
 	while (x < 4)
 	{
 		y = 0;
@@ -81,7 +81,7 @@ void	set_tet_width(t_tetro *tet[], char tet_arr[][4][6], uint8_t size)
 		{
 			if (tet_arr[0][y][x] == '#')
 			{
-				tet[size]->width += 1;
+				tet[size].width += 1;
 				break ;
 			}
 			y++;
@@ -126,7 +126,7 @@ void	find_coord(char tet_arr[][4][6], int *coord_x, int *coord_y)
 
 }
 
-void	cut_tet(t_tetro *tet[], char tet_arr[][4][6], uint8_t size, char letter)
+void	cut_tet(t_tetro tet[], char tet_arr[][4][6], uint8_t size, char letter)
 {
 	int	coord_x;
 	int	coord_y;
@@ -135,31 +135,31 @@ void	cut_tet(t_tetro *tet[], char tet_arr[][4][6], uint8_t size, char letter)
 
 	index = 0;
 	find_coord(tet_arr, &coord_x, &coord_y);
-	i = tet[0]->height;
-	tet[0]->letter = letter;
-	while (index < tet[0]->height)
+	i = tet[0].height;
+	tet[0].letter = letter;
+	while (index < tet[0].height)
 	{// MEMORY LEAK? 2
-		tet[0]->tet[index] = ft_strsub(tet_arr[0][coord_y], coord_x, tet[0]->width);
+		tet[0].tet[index] = ft_strsub(tet_arr[0][coord_y], coord_x, tet[0].width);
 		coord_y++;
-		tet[0]->tet[index][tet[0]->width] = '\0';
-		tet[0]->x = 0;
-		tet[0]->y = 0;
-		tet[0]->first_try = true;
-		//printf("tet[0]->height %d\n", tet[0]->height);
-		chr_replace(tet[0]->tet[index], '#', letter, 4);
-	//	printf("\"%s\"\n", tet[0]->tet[index]);
+		tet[0].tet[index][tet[0].width] = '\0';
+		tet[0].x = 0;
+		tet[0].y = 0;
+		tet[0].first_try = true;
+		//printf("tet[0].height %d\n", tet[0].height);
+		chr_replace(tet[0].tet[index], '#', letter, 4);
+	//	printf("\"%s\"\n", tet[0].tet[index]);
 		i--;
 		index++;
 	}
-//	printf("LETTER: \"%c\"\n", tet[0]->letter);
+//	printf("LETTER: \"%c\"\n", tet[0].letter);
 //	printf("--------------------------\n");
 	if (size)
 		cut_tet(&tet[-1], &tet_arr[-1], size - 1, letter - 1);
 }
 
-void	str_mem_aloc(t_tetro *tet[], uint8_t size)
+void	str_mem_aloc(t_tetro tet[], uint8_t size)
 {// MEMORY LEAK? 1
-	tet[size]->tet = (char **)ft_memalloc(sizeof(char *) * tet[size]->height);
+	tet[size].tet = (char **)ft_memalloc(sizeof(char *) * tet[size].height);
 	if (size)
 		str_mem_aloc(tet, size - 1);
 }
@@ -192,23 +192,23 @@ void	ft_arr_del(char **str_arr, int8_t size)
 	}
 }
 
-void	turn_back_time(t_tetro *tet[], uint8_t size)
+void	turn_back_time(t_tetro tet[], uint8_t size)
 {
-	tet[0]->first_try = true;
-	tet[0]->x = 0;
-	tet[0]->y = 0;
+	tet[0].first_try = true;
+	tet[0].x = 0;
+	tet[0].y = 0;
 	if (size)
 		turn_back_time(&tet[-1], size - 1);
 }
 
-void	free_arr(t_tetro *tet[], uint8_t size)
+void	free_arr(t_tetro tet[], uint8_t size)
 {
 	uint8_t	i;
 
 	i = 0;
 	while(i < size)
 	{
-		ft_arr_del(tet[i]->tet, tet[i]->height);
+		ft_arr_del(tet[i].tet, tet[i].height);
 		i++;
 	}
 	
@@ -226,14 +226,14 @@ void	free_arr(t_tetro *tet[], uint8_t size)
 
 int8_t	store_data(char tet_arr[][4][6], uint8_t size)
 {
-	t_tetro	*tet[size];
+	t_tetro	tet[size];
 	int8_t	map_size;
 	int8_t	result;
 	char	**map;
 
 	map = NULL;
-	if (struct_mem_aloc(tet, size) == -1)
-			return (-1);
+//	if (struct_mem_aloc(tet, size) == -1)
+//			return (-1);
 	size--;
 	set_tet_height(tet, &tet_arr[size], size);
 	set_tet_width(tet, &tet_arr[size], size);
