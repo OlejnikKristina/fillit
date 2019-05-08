@@ -6,7 +6,7 @@
 /*   By: krioliin <krioliin@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/14 20:28:10 by krioliin       #+#    #+#                */
-/*   Updated: 2019/05/07 16:20:02 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/08 15:57:07 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,39 +209,38 @@ void	free_arr(t_tetro tet[], uint8_t size)
 **
 */
 
-int8_t	store_data(char tet_arr[][4][6], uint8_t size)
+int8_t	store_data(char tet_arr[][4][6], uint8_t tet_amount)
 {
-	t_tetro	tet[size];
-	int8_t	map_size;
+	t_tetro	tet[tet_amount];
+	t_map	map;
 	int8_t	result;
-	char	**map;
 
-	map = NULL;
-	size--;
-	set_tet_height(tet, &tet_arr[size], size);
-	set_tet_width(tet, &tet_arr[size], size);
-	str_mem_aloc(tet, size);
-	cut_tet(&tet[size], &tet_arr[size], size, 'A' + size);
+	map.map = NULL;
+	map.size = kr_sqrt((tet_amount) * 4);
+	tet_amount--;
+	map.tet_amount = tet_amount;
+	set_tet_height(tet, &tet_arr[tet_amount], tet_amount);
+	set_tet_width(tet, &tet_arr[tet_amount], tet_amount);
+	str_mem_aloc(tet, tet_amount);
+	cut_tet(&tet[tet_amount], &tet_arr[tet_amount], tet_amount, 'A' + tet_amount);
 
-	map_size = kr_sqrt((size + 1) * 4);
-	int i = 0;
-	map = map_mem_aloc(map, map_size );
-	result = solver(tet, map, map_size, size, &i);
+	map.i = 0;
+	map.map = map_mem_aloc(map.map, map.size);
+	result = main_algoritm(tet, &map);
 	while (result == SMALL_MAP)
 	{
-		printf("Call solver one more time\n");
-		ft_arr_del(map, map_size);
-		turn_back_time(&tet[size], size);
-		map_size += 1;
-		i = 0;
-		map = map_mem_aloc(map, map_size);
-		result = solver(tet, map, map_size, size, &i);
+//		printf("Call main_algoritm one more time\n");
+		ft_arr_del(map.map, map.size);
+		turn_back_time(&tet[tet_amount], tet_amount);
+		map.size += 1;
+		map.i = 0;
+		map.map = map_mem_aloc(map.map, map.size);
+		result = main_algoritm(tet, &map);
 	}
-	printf("Tet amount: %d\n", size + 1);
-	free_arr(tet, size);
-	print_map(map, map_size);
-	ft_arr_del(map, map_size);
-	sleep(10);
+//	printf("Tet amount: %d\n", tet_amount + 1);
+	free_arr(tet, tet_amount);
+	print_map(map.map, map.size);
+	ft_arr_del(map.map, map.size);
 	return (0);
 }
 
@@ -249,12 +248,11 @@ int		main(int argc, char **argv)
 {
 	if ((argc != 2) && error_msg(4))
 		return (0);
-	sleep(10);
 	clock_t begin = clock();
 	if ((check_file(argv[1]) == -1))
 		return (0);
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-	printf("\033[36mtime:%f\n\033[0m", time_spent);
+//	printf("\033[36mtime:%f\n\033[0m", time_spent);
 	return (0);
 }

@@ -1,5 +1,14 @@
 {
     "files.associations": {
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "__tree": "c",
+        "bitset": "c",
+        "initializer_list": "c",
+        "iterator": "c",
+        "list": "c",
+        "map": "c",
+        "memory": "c",
+        "string": "c",
+        "utility": "c"
     }
 }

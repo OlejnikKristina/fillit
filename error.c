@@ -6,7 +6,7 @@
 /*   By: krioliin <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/20 15:54:18 by krioliin       #+#    #+#                */
-/*   Updated: 2019/05/07 16:02:36 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/08 15:57:20 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,17 +101,17 @@ uint8_t		error_msg(int error)
 {
 	ft_putstr("error\n");
 	if (error == 1)
-		ft_putstr("Can not open a file\n");
+		ft_putstr("Can not open a file");
 	else if (error == 2)
-		ft_putstr("File has invalid input\n");
+		ft_putstr("File has invalid input");
 	else if (error == 3)
-		ft_putstr("Not new line in the end of tetrominos\n");
+		ft_putstr("Not new line in the end of tetrominos");
 	else if (error == 4)
-		ft_putstr("Send as parraeter one file.\n");
+		ft_putstr("Send as parraeter one file.");
 	else if (error == 5)
-		ft_putstr("Not correct input.\n");
+		ft_putstr("Not correct input.");
 	else if (error == 6)
-		ft_putstr("Incorrect shape of tetramino\n");
+		ft_putstr("Incorrect shape of tetramino");
 	else
 		return (1);
 	return (1);
