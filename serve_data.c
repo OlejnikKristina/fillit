@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   fillit.c                                           :+:    :+:            */
+/*   serve_data.c                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: krioliin <krioliin@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/04/14 20:28:10 by krioliin       #+#    #+#                */
-/*   Updated: 2019/05/08 15:57:07 by krioliin      ########   odam.nl         */
+/*   Updated: 2019/05/13 19:46:41 by krioliin      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "fillit.h"
-# include <inttypes.h>
-#include <time.h>
+#include <inttypes.h>
 
 /*
 ** Function measures height of every tetramino.
-** And put it in struct's variable y 
+** And put it in struct's variable y
+** clang -o fillit fillit.c error.c
+** file_validation.c solver.c auxiliary_functions.c main.c libft/libft.a
 */
 
 void	set_tet_height(t_tetro tet[], char tet_arr[][4][6], uint8_t size)
@@ -77,14 +77,18 @@ void	set_tet_width(t_tetro tet[], char tet_arr[][4][6], uint8_t size)
 		set_tet_width(tet, &tet_arr[-1], size - 1);
 }
 
-void	find_coord(char tet_arr[][4][6], int *coord_x, int *coord_y)
+/*
+** Function 'find_coord' find first occurence of '#'
+** And store its coordinat into '*coord_x' and '*coord_y'
+*/
+
+void	find_coord(char tet_arr[][4][6], int *coord_x, int *coord_y, int8_t y)
 {
 	int8_t	x;
-	int8_t	y;
 
 	*coord_x = -1;
 	y = 0;
-	while ((y < 4))
+	while (y < 4)
 	{
 		if (ft_strchr(&tet_arr[0][y][0], '#'))
 		{
@@ -94,7 +98,7 @@ void	find_coord(char tet_arr[][4][6], int *coord_x, int *coord_y)
 		y++;
 	}
 	x = 0;
-	while ((x < 4) && (*coord_x == -1))
+	while (x < 4 && *coord_x == -1)
 	{
 		y = 0;
 		while (y < 4)
@@ -108,151 +112,80 @@ void	find_coord(char tet_arr[][4][6], int *coord_x, int *coord_y)
 		}
 		x++;
 	}
-
 }
+
+/*
+** Function 'cut_tet' cut block which represent a tetramino (figure)
+** to the minimum unit which still be able to represent a shape of figure
+** For instanse:
+** not-cut:		cut:	Every not-cut block store in one element
+**	.###		###		tet_arr[num_of_block][num_of_line][num_of_charater]
+**	.#..		#..
+**	....				Every cut block lockets in sytruct 'tet'
+**	....				store as (char **) which also named 'tet'
+**						tet[num_of_block].tet[num_of_line][num_of_charater]
+*/
 
 void	cut_tet(t_tetro tet[], char tet_arr[][4][6], uint8_t size, char letter)
 {
-	int	coord_x;
-	int	coord_y;
 	int8_t	i;
 	int8_t	index;
+	int		x;
+	int		y;
 
 	index = 0;
-	find_coord(tet_arr, &coord_x, &coord_y);
+	find_coord(tet_arr, &x, &y, 0);
 	i = tet[0].height;
 	tet[0].letter = letter;
+	tet[0].tet = (char **)ft_memalloc(sizeof(char *) * tet[0].height);
 	while (index < tet[0].height)
-	{// MEMORY LEAK? 2
-		tet[0].tet[index] = ft_strsub(tet_arr[0][coord_y], coord_x, tet[0].width);
-		coord_y++;
+	{
+		tet[0].tet[index] = ft_strsub(tet_arr[0][y], x, tet[0].width);
+		y++;
 		tet[0].tet[index][tet[0].width] = '\0';
 		tet[0].x = 0;
 		tet[0].y = 0;
 		tet[0].first_try = true;
-		//printf("tet[0].height %d\n", tet[0].height);
 		chr_replace(tet[0].tet[index], '#', letter, 4);
-	//	printf("\"%s\"\n", tet[0].tet[index]);
 		i--;
 		index++;
 	}
-//	printf("LETTER: \"%c\"\n", tet[0].letter);
-//	printf("--------------------------\n");
 	if (size)
 		cut_tet(&tet[-1], &tet_arr[-1], size - 1, letter - 1);
 }
 
-void	str_mem_aloc(t_tetro tet[], uint8_t size)
-{// MEMORY LEAK? 1
-	tet[size].tet = (char **)ft_memalloc(sizeof(char *) * tet[size].height);
-	if (size)
-		str_mem_aloc(tet, size - 1);
-}
-
-char	**map_mem_aloc(char **map, int map_size)
-{
-	int8_t	i;
-
-	i = 0;
-	map = (char **)ft_memalloc(sizeof(char *) * (map_size + 1));
-	while (i < map_size)
-	{
-		map[i] = ft_strnew(map_size);
-		map[i] = (char *)ft_memset((void *)map[i], '.', map_size);
-		map[i][map_size + 1] = '\0';
-		i++;
-	}
-	return (map);
-}
-
-void	ft_arr_del(char **str_arr, int8_t size)
-{
-	int8_t	i;
-
-	i = 0;
-	while (i < size)
-	{
-		ft_strdel(&str_arr[i]);
-		i++;
-	}
-}
-
-void	turn_back_time(t_tetro tet[], uint8_t size)
-{
-	tet[0].first_try = true;
-	tet[0].x = 0;
-	tet[0].y = 0;
-	if (size)
-		turn_back_time(&tet[-1], size - 1);
-}
-
-void	free_arr(t_tetro tet[], uint8_t size)
-{
-	uint8_t	i;
-
-	i = 0;
-	while(i < size)
-	{
-		ft_arr_del(tet[i].tet, tet[i].height);
-		i++;
-	}
-	
-}
-
 /*
-** Varievble size = amount of tetromino
-** Function "pick_data" gather info from 3 dimensional array. 
+** Varieble size = amount of tetromino
+** Function "pick_data" gather info from 3 dimensional array.
 ** Which store entire valid map/file. (Uses automatic mem).
 ** And put info about tetrominos in array of pointers to struts.
-** Every struct has info about: 
+** Every struct has info about:
 ** Tetrominos width (tet[0]->x), heghit (tet[0]->y)
-**
 */
 
-int8_t	store_data(char tet_arr[][4][6], uint8_t tet_amount)
+void	serve_data(char tet_arr[][4][6], uint8_t tet_amount)
 {
 	t_tetro	tet[tet_amount];
 	t_map	map;
-	int8_t	result;
 
-	map.map = NULL;
 	map.size = kr_sqrt((tet_amount) * 4);
 	tet_amount--;
-	map.tet_amount = tet_amount;
+	map.amnt = tet_amount;
 	set_tet_height(tet, &tet_arr[tet_amount], tet_amount);
 	set_tet_width(tet, &tet_arr[tet_amount], tet_amount);
-	str_mem_aloc(tet, tet_amount);
-	cut_tet(&tet[tet_amount], &tet_arr[tet_amount], tet_amount, 'A' + tet_amount);
-
+	cut_tet(&tet[tet_amount], &tet_arr[map.amnt], tet_amount, 'A' + tet_amount);
 	map.i = 0;
 	map.map = map_mem_aloc(map.map, map.size);
-	result = main_algoritm(tet, &map);
-	while (result == SMALL_MAP)
+	while (solver(tet, &map, 0) == SMALL_MAP)
 	{
-//		printf("Call main_algoritm one more time\n");
-		ft_arr_del(map.map, map.size);
+		del_arr(map.map, map.size);
 		turn_back_time(&tet[tet_amount], tet_amount);
 		map.size += 1;
 		map.i = 0;
 		map.map = map_mem_aloc(map.map, map.size);
-		result = main_algoritm(tet, &map);
 	}
-//	printf("Tet amount: %d\n", tet_amount + 1);
-	free_arr(tet, tet_amount);
+	print_tet_amount(tet_amount);
 	print_map(map.map, map.size);
-	ft_arr_del(map.map, map.size);
-	return (0);
-}
-
-int		main(int argc, char **argv)
-{
-	if ((argc != 2) && error_msg(4))
-		return (0);
-	clock_t begin = clock();
-	if ((check_file(argv[1]) == -1))
-		return (0);
-	clock_t end = clock();
-	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-//	printf("\033[36mtime:%f\n\033[0m", time_spent);
-	return (0);
+	clean_struct(tet, tet_amount);
+	del_arr(map.map, map.size);
 }
